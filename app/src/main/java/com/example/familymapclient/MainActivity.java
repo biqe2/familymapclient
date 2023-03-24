@@ -2,10 +2,14 @@ package com.example.familymapclient;
 
 
 import androidx.appcompat.app.AppCompatActivity;
+
+import android.net.wifi.WifiConfiguration;
 import android.view.View;
 import android.widget.*;
 
 import android.os.Bundle;
+
+import Model.UserModel;
 
 public class MainActivity extends AppCompatActivity {
 
