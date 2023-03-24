@@ -1,38 +1,48 @@
 package com.example.familymapclient;
 
-
 import androidx.appcompat.app.AppCompatActivity;
-
-import android.net.wifi.WifiConfiguration;
-import android.view.View;
-import android.widget.*;
+import androidx.fragment.app.Fragment;
+import androidx.fragment.app.FragmentManager;
 
 import android.os.Bundle;
 
-import Model.UserModel;
-
-public class MainActivity extends AppCompatActivity {
+public class MainActivity extends AppCompatActivity implements LoginFirst.Listener {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-    }
-    public void onRadioButtonClicked(View view) {
-        // Is the button now checked?
-        boolean checked = ((RadioButton) view).isChecked();
 
-        // Check which radio button was clicked
-        switch(view.getId()) {
-            case R.id.newMale:
-                if (checked)
-                    // Gender = Male
-                    break;
-            case R.id.newFemale:
-                if (checked)
-                    // Gender = Female
-                    break;
+        FragmentManager fragmentManager = this.getSupportFragmentManager();
+        Fragment fragment = fragmentManager.findFragmentById(R.id.fragmentFrameLayout);
+        if(fragment == null) {
+            fragment = createFirstFragment();
+
+            fragmentManager.beginTransaction()
+                    .add(R.id.fragmentFrameLayout, fragment)
+                    .commit();
+        } else {
+            // If the fragment is not null, the MainActivity was destroyed and recreated
+            // so we need to reset the listener to the new instance of the fragment
+            if(fragment instanceof LoginFirst) {
+                ((LoginFirst) fragment).registerListener(this);
+            }
         }
     }
-}
 
+    private Fragment createFirstFragment() {
+        LoginFirst fragment = new LoginFirst();
+        fragment.registerListener(this);
+        return fragment;
+    }
+
+    @Override
+    public void notifyDone() {
+        FragmentManager fragmentManager = this.getSupportFragmentManager();
+        Fragment fragment = new LoginSecond();
+
+        fragmentManager.beginTransaction()
+                .replace(R.id.fragmentFrameLayout, fragment)
+                .commit();
+    }
+}
