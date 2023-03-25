@@ -28,6 +28,12 @@ public class LoginFirst extends Fragment {
         View view = inflater.inflate(R.layout.fragment_login_first, container, false);
 
         Button doneButton = view.findViewById(R.id.loginButton);
+        EditText username = view.findViewById(R.id.usernameField);
+        String loginUsername = username.getText().toString();
+        EditText password = view.findViewById(R.id.passwordField);
+        String loginPassword = password.getText().toString();
+
+
         doneButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
