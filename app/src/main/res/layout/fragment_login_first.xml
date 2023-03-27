@@ -18,6 +18,36 @@
                 android:layout_height="wrap_content"
                 android:layout_width="wrap_content"
                 android:gravity="end"
+                android:text="Server Host:"/>
+            <EditText
+                android:id="@+id/serverHost"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_span="3"
+
+                tools:text="numbers" />
+        </TableRow>
+
+        <TableRow>
+            <TextView
+                android:layout_height="wrap_content"
+                android:layout_width="wrap_content"
+                android:gravity="end"
+                android:text="Server Port:"/>
+            <EditText
+                android:id="@+id/serverPort"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_span="3"
+
+                tools:text="serverPort" />
+        </TableRow>
+
+        <TableRow>
+            <TextView
+                android:layout_height="wrap_content"
+                android:layout_width="wrap_content"
+                android:gravity="end"
                 android:text="Username:"/>
             <EditText
                 android:id="@+id/usernameField"
@@ -110,6 +140,7 @@
                 android:text="Gender:"/>
 
             <RadioGroup xmlns:android="http://schemas.android.com/apk/res/android"
+                android:id="@+id/radioGroup"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:orientation="vertical">

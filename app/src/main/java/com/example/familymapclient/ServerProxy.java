@@ -8,13 +8,19 @@ import java.io.OutputStreamWriter;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import com.google.gson.Gson;
+
+import Model.PersonModel;
 import Requests.LoginRequest;
 import Requests.RegisterRequest;
+import Responses.EventResponse;
 import Responses.LoginResponse;
+import Responses.PersonResponse;
 import Responses.RegisterResponse;
 
 public class ServerProxy {
-    private LoginResponse login(LoginRequest request, String serverHost, String serverPort) {
+
+
+    public LoginResponse login(LoginRequest request, String serverHost, String serverPort) {
 
         try {
             Gson gson = new Gson();
@@ -67,7 +73,7 @@ public class ServerProxy {
         return null;
     }
 
-    private RegisterResponse register(RegisterRequest request, String serverHost, String serverPort) {
+    public RegisterResponse register(RegisterRequest request, String serverHost, String serverPort) {
 
         try {
             Gson gson = new Gson();
@@ -120,6 +126,117 @@ public class ServerProxy {
         return null;
     }
 
+
+    public PersonResponse getPeople(String authtoken, String serverHost, String serverPort) {
+
+        try {
+            Gson gson = new Gson();
+            URL url = new URL("http://" + serverHost + ":" + serverPort + "/person");
+
+            HttpURLConnection http = (HttpURLConnection) url.openConnection();
+            http.setRequestMethod("GET");
+
+            http.setDoOutput(false);    // There is a request body
+
+            http.addRequestProperty("Authorization", authtoken);
+
+            http.connect();
+
+            //For get I dont need the next 4 lines? 147-153
+
+            String reqData = gson.toJson(authtoken);
+
+            OutputStream reqBody = http.getOutputStream();
+
+            writeString(reqData, reqBody);
+
+            reqBody.close();
+
+            if (http.getResponseCode() == HttpURLConnection.HTTP_OK) {
+                //We added this basically
+                InputStream resultHttp = http.getInputStream();
+
+                String resultData = readString(resultHttp);
+
+                System.out.println(reqData);
+
+                PersonResponse response = gson.fromJson(resultData, PersonResponse.class);
+                return response;
+            } else {
+
+                System.out.println("ERROR: " + http.getResponseMessage());
+
+                InputStream respBody = http.getErrorStream();
+
+                String resultData = readString(respBody);
+
+                System.out.println(reqData);
+
+                //We added the next two lines
+                PersonResponse response = gson.fromJson(resultData, PersonResponse.class);
+                return response;
+
+            }
+        } catch (IOException e) {
+            // An exception was thrown, so display the exception's stack trace
+            e.printStackTrace();
+        }
+        return null;
+    }
+    public EventResponse getEvents(String authtoken, String serverHost, String serverPort) {
+
+        try {
+            Gson gson = new Gson();
+            URL url = new URL("http://" + serverHost + ":" + serverPort + "/event");
+
+            HttpURLConnection http = (HttpURLConnection) url.openConnection();
+            http.setRequestMethod("GET");
+
+            http.setDoOutput(false);    // There is a request body
+
+            http.addRequestProperty("Authorization", authtoken);
+
+            http.connect();
+
+            String reqData = gson.toJson(authtoken);
+
+            OutputStream reqBody = http.getOutputStream();
+
+            writeString(reqData, reqBody);
+
+            reqBody.close();
+
+            if (http.getResponseCode() == HttpURLConnection.HTTP_OK) {
+
+                InputStream resultHttp = http.getInputStream();
+
+                String resultData = readString(resultHttp);
+
+                System.out.println(reqData);
+
+                EventResponse response = gson.fromJson(resultData, EventResponse.class);
+                return response;
+            } else {
+
+                System.out.println("ERROR: " + http.getResponseMessage());
+
+                InputStream respBody = http.getErrorStream();
+
+                String resultData = readString(respBody);
+
+                System.out.println(reqData);
+
+
+                EventResponse response = gson.fromJson(resultData, EventResponse.class);
+                return response;
+
+            }
+        } catch (IOException e) {
+            // An exception was thrown, so display the exception's stack trace
+            e.printStackTrace();
+        }
+        return null;
+    }
 
     private static String readString(InputStream is) throws IOException {
         StringBuilder sb = new StringBuilder();
