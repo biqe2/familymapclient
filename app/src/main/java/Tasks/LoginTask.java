@@ -34,8 +34,8 @@ public class LoginTask implements Runnable{
     public void run() {
         ServerProxy serverProxy = new ServerProxy();
         LoginResponse loginResponse = serverProxy.login(request,serverHost,serverPort);
-        if(loginResponse == null){
-            sendMessage("Error: processing longin");
+        if(loginResponse == null || loginResponse.getMessage() != null){
+            sendMessage("Error:processing longin");
         } else {
 
             DataCache data = DataCache.getInstance();

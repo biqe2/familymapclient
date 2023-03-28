@@ -144,13 +144,7 @@ public class ServerProxy {
 
             //For get I dont need the next 4 lines? 147-153
 
-            String reqData = gson.toJson(authtoken);
 
-            OutputStream reqBody = http.getOutputStream();
-
-            writeString(reqData, reqBody);
-
-            reqBody.close();
 
             if (http.getResponseCode() == HttpURLConnection.HTTP_OK) {
                 //We added this basically
@@ -158,7 +152,7 @@ public class ServerProxy {
 
                 String resultData = readString(resultHttp);
 
-                System.out.println(reqData);
+
 
                 PersonResponse response = gson.fromJson(resultData, PersonResponse.class);
                 return response;
@@ -170,7 +164,7 @@ public class ServerProxy {
 
                 String resultData = readString(respBody);
 
-                System.out.println(reqData);
+
 
                 //We added the next two lines
                 PersonResponse response = gson.fromJson(resultData, PersonResponse.class);
@@ -198,13 +192,7 @@ public class ServerProxy {
 
             http.connect();
 
-            String reqData = gson.toJson(authtoken);
 
-            OutputStream reqBody = http.getOutputStream();
-
-            writeString(reqData, reqBody);
-
-            reqBody.close();
 
             if (http.getResponseCode() == HttpURLConnection.HTTP_OK) {
 
@@ -212,7 +200,6 @@ public class ServerProxy {
 
                 String resultData = readString(resultHttp);
 
-                System.out.println(reqData);
 
                 EventResponse response = gson.fromJson(resultData, EventResponse.class);
                 return response;
@@ -224,7 +211,7 @@ public class ServerProxy {
 
                 String resultData = readString(respBody);
 
-                System.out.println(reqData);
+
 
 
                 EventResponse response = gson.fromJson(resultData, EventResponse.class);

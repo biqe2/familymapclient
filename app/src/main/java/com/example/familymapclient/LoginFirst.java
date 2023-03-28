@@ -31,8 +31,10 @@ public class LoginFirst extends Fragment {
 
     private Listener listener;
     private ServerProxy serverProxy = new ServerProxy();
-    private String serverHost = "10.37160.20";
+    private String serverHost = "192.168.252.170";
     private String serverPort = "8080";
+    private String gender = "FEMALE";
+    private LoginRequest loginRequest;
     EditText newUsername;
     EditText newPassword;
     EditText newEmailAddress;
@@ -40,6 +42,7 @@ public class LoginFirst extends Fragment {
     EditText newLastName;
     Button loginButton;
     Button registerButton;
+    private RegisterRequest registerRequest;
 
     public interface Listener {
         void notifyDone();
@@ -97,8 +100,7 @@ public class LoginFirst extends Fragment {
         newFirstName.addTextChangedListener(textWatcher);
         newLastName.addTextChangedListener(textWatcher);
 
-        RegisterRequest registerRequest = new RegisterRequest(newUsername.getText().toString(),newPassword.getText().toString(),newEmailAddress.getText().toString(),
-                newFirstName.getText().toString(),newLastName.getText().toString(),null);
+
 
 
 
@@ -106,14 +108,13 @@ public class LoginFirst extends Fragment {
 
             @Override
             public void onCheckedChanged(RadioGroup group, int checkedId) {
-                RadioButton radioButton = view.findViewById(checkedId);
-                registerRequest.setGender(radioButton.getText().toString());
+                gender = checkedId == R.id.newMale ? "MALE" : "FEMALE";
             }
 
         });
 
 
-        LoginRequest loginRequest = new LoginRequest(newUsername.getText().toString(),newPassword.getText().toString());
+
 
 
         loginButton = view.findViewById(R.id.loginButton);
@@ -121,8 +122,7 @@ public class LoginFirst extends Fragment {
         loginButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-
-
+                loginRequest = new LoginRequest(newUsername.getText().toString(),newPassword.getText().toString());
                 Handler uiThreadMessageHandler = new Handler(Looper.getMainLooper()) {
                     @Override
                     public void handleMessage(Message message) {
@@ -160,9 +160,9 @@ public class LoginFirst extends Fragment {
 
 
 
-                if(listener != null) {
+            /*    if(listener != null) {
                     listener.notifyDone();
-                }
+                }*/
 
             }
         });
@@ -171,6 +171,9 @@ public class LoginFirst extends Fragment {
         registerButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+
+                registerRequest = new RegisterRequest(newUsername.getText().toString(),newPassword.getText().toString(),newEmailAddress.getText().toString(),
+                        newFirstName.getText().toString(),newLastName.getText().toString(),gender);
                 Handler uiThreadMessageHandler = new Handler(Looper.getMainLooper()) {
                     @Override
                     public void handleMessage(Message message) {
