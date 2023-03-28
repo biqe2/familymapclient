@@ -6,9 +6,14 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
 
+import com.example.familymapclient.DataCache;
 import com.example.familymapclient.ServerProxy;
 
+import Model.EventModel;
+import Model.PersonModel;
 import Requests.RegisterRequest;
+import Responses.EventResponse;
+import Responses.PersonResponse;
 import Responses.RegisterResponse;
 
 public class RegisterTask implements Runnable{
@@ -31,7 +36,18 @@ public class RegisterTask implements Runnable{
         if(response == null || response.getMessage() != null){
             sendMessage("Error processing register");
         } else {
-            sendMessage(response.getUsername() + " was registered correctly");
+            DataCache data = DataCache.getInstance();
+            data.setLoginAuthtoken(response.getAuthtoken());
+            PersonResponse personResponse = serverProxy.getPeople(response.getAuthtoken(), serverHost, serverPort);
+            PersonModel[] personLists = personResponse.getData();
+            data.setPeople(personLists);
+            EventResponse eventResponse = serverProxy.getEvents(response.getAuthtoken(), serverHost, serverPort);
+            EventModel[] eventLists = eventResponse.getData();
+            data.setEvents(eventLists);
+            PersonModel userPerson = data.getPeople().get(response.getPersonID());
+            String firstName = userPerson.getFirstName();
+            String lastName = userPerson.getLastName();
+            sendMessage("Register was successful for " + firstName + " " + lastName);
         }
     }
 

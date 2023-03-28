@@ -52,7 +52,7 @@ public class LoginTask implements Runnable{
 
             //This is how you will get the specific name of the user
 
-            sendMessage("login was successful correctly for " + firstName + " " + lastName);
+            sendMessage("login was successful for " + firstName + " " + lastName);
         }
     }
 
