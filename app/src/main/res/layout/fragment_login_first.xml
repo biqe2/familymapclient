@@ -18,80 +18,6 @@
                 android:layout_height="wrap_content"
                 android:layout_width="wrap_content"
                 android:gravity="end"
-                android:text="Server Host:"/>
-            <EditText
-                android:id="@+id/serverHost"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_span="3"
-
-                tools:text="numbers" />
-        </TableRow>
-
-        <TableRow>
-            <TextView
-                android:layout_height="wrap_content"
-                android:layout_width="wrap_content"
-                android:gravity="end"
-                android:text="Server Port:"/>
-            <EditText
-                android:id="@+id/serverPort"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_span="3"
-
-                tools:text="serverPort" />
-        </TableRow>
-
-        <TableRow>
-            <TextView
-                android:layout_height="wrap_content"
-                android:layout_width="wrap_content"
-                android:gravity="end"
-                android:text="Username:"/>
-            <EditText
-                android:id="@+id/usernameField"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_span="3"
-                android:inputType="textPostalAddress"
-                tools:text="Jerod1025" />
-        </TableRow>
-
-        <TableRow>
-            <TextView
-                android:layout_height="wrap_content"
-                android:layout_width="wrap_content"
-                android:gravity="end"
-                android:text="Password:"/>
-            <EditText
-                android:id="@+id/passwordField"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_span="3"
-                android:inputType="textPassword"
-                tools:text="jerodisthebest" />
-        </TableRow>
-
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:orientation="horizontal"
-            android:paddingTop="20dp"
-            android:gravity="center">
-            <Button
-                android:id="@+id/loginButton"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="Login" />
-
-        </LinearLayout>
-
-        <TableRow>
-            <TextView
-                android:layout_height="wrap_content"
-                android:layout_width="wrap_content"
-                android:gravity="end"
                 android:text="Username:"/>
             <EditText
                 android:id="@+id/newUsernameField"
@@ -147,13 +73,13 @@
                 <RadioButton android:id="@+id/newMale"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="Male"
-                    android:onClick="onRadioButtonClicked"/>
+                    android:text="Male" />
                 <RadioButton android:id="@+id/newFemale"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="Female"
-                    android:onClick="onRadioButtonClicked"/>
+                    android:checked="true"/>
+
             </RadioGroup>
 
         </TableRow>
@@ -199,7 +125,15 @@
                 android:id="@+id/registerButton"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="Register" />
+                android:text="Register"
+                android:enabled="false"/>
+            <Button
+                android:id="@+id/loginButton"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Login"
+                android:enabled="false"/>
+
         </LinearLayout>
     </TableLayout>
 </ScrollView>

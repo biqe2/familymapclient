@@ -3,10 +3,13 @@ package com.example.familymapclient;
 import android.os.Bundle;
 
 import androidx.fragment.app.Fragment;
+import androidx.fragment.app.FragmentTransaction;
 
 import android.os.Handler;
 import android.os.Looper;
 import android.os.Message;
+import android.text.Editable;
+import android.text.TextWatcher;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -28,7 +31,15 @@ public class LoginFirst extends Fragment {
 
     private Listener listener;
     private ServerProxy serverProxy = new ServerProxy();
-   // RegisterResponse registerResponse = new RegisterResponse();
+    private String serverHost = "10.37160.20";
+    private String serverPort = "8080";
+    EditText newUsername;
+    EditText newPassword;
+    EditText newEmailAddress;
+    EditText newFirstName;
+    EditText newLastName;
+    Button loginButton;
+    Button registerButton;
 
     public interface Listener {
         void notifyDone();
@@ -38,22 +49,74 @@ public class LoginFirst extends Fragment {
         this.listener = listener;
     }
 
+    private TextWatcher textWatcher = new TextWatcher() {
+        @Override
+        public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+
+        }
+
+        @Override
+        public void onTextChanged(CharSequence s, int start, int before, int count) {
+            String usernameInput = newUsername.getText().toString();
+            String passwordInput = newPassword.getText().toString();
+            String emailInput = newEmailAddress.getText().toString();
+            String firstNameInput = newFirstName.getText().toString();
+            String lastNameInput = newLastName.getText().toString();
+
+            loginButton.setEnabled(!usernameInput.isEmpty() && !passwordInput.isEmpty());
+            registerButton.setEnabled(!usernameInput.isEmpty() && !passwordInput.isEmpty() && !emailInput.isEmpty() && !firstNameInput.isEmpty() && !lastNameInput.isEmpty());
+        }
+
+        @Override
+        public void afterTextChanged(Editable s) {
+
+        }
+    };
+        // RegisterResponse registerResponse = new RegisterResponse();
+
+
+
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
 
         View view = inflater.inflate(R.layout.fragment_login_first, container, false);
-        //Login section
-        EditText serverHost = view.findViewById(R.id.serverHost);
-        EditText serverPort = view.findViewById(R.id.serverPort);
-        EditText username = view.findViewById(R.id.usernameField);
-        String loginUsername = username.getText().toString();
-        EditText password = view.findViewById(R.id.passwordField);
-        String loginPassword = password.getText().toString();
 
-        LoginRequest loginRequest = new LoginRequest(loginUsername,loginPassword);
+         newUsername = view.findViewById(R.id.newUsernameField);
+         newPassword = view.findViewById(R.id.newPasswordField);
+         newEmailAddress = view.findViewById(R.id.newEmailAddressField);
+         newFirstName = view.findViewById(R.id.newFirstNameField);
+         newLastName = view.findViewById(R.id.newLastNameField);
+        RadioGroup newGender = view.findViewById(R.id.radioGroup);
+        loginButton = view.findViewById(R.id.loginButton);
+        registerButton = view.findViewById(R.id.registerButton);
 
-        Button loginButton = view.findViewById(R.id.loginButton);
+        newUsername.addTextChangedListener(textWatcher);
+        newPassword.addTextChangedListener(textWatcher);
+        newEmailAddress.addTextChangedListener(textWatcher);
+        newFirstName.addTextChangedListener(textWatcher);
+        newLastName.addTextChangedListener(textWatcher);
+
+        RegisterRequest registerRequest = new RegisterRequest(newUsername.getText().toString(),newPassword.getText().toString(),newEmailAddress.getText().toString(),
+                newFirstName.getText().toString(),newLastName.getText().toString(),null);
+
+
+
+        newGender.setOnCheckedChangeListener(new RadioGroup.OnCheckedChangeListener() {
+
+            @Override
+            public void onCheckedChanged(RadioGroup group, int checkedId) {
+                RadioButton radioButton = view.findViewById(checkedId);
+                registerRequest.setGender(radioButton.getText().toString());
+            }
+
+        });
+
+
+        LoginRequest loginRequest = new LoginRequest(newUsername.getText().toString(),newPassword.getText().toString());
+
+
+        loginButton = view.findViewById(R.id.loginButton);
 
         loginButton.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -65,15 +128,37 @@ public class LoginFirst extends Fragment {
                     public void handleMessage(Message message) {
                         Bundle bundle = message.getData();
                         String stringResponse = bundle.getString("loginKey", "");
+                        //Create the toast
+                        Toast toast = Toast.makeText(getContext(), stringResponse, Toast.LENGTH_SHORT);
+                        toast.show();
+                     /*   if(stringResponse.equals("Error: processing longin")){
+                            Toast toast = Toast.makeText(getContext(), stringResponse, Toast.LENGTH_SHORT);
+                            toast.show();
+                        } else {
+                            Toast toast = Toast.makeText(getContext(), stringResponse, Toast.LENGTH_SHORT);
+                            toast.show();
+                        } */
+
                     }
                 };
 
                 // Create and execute the download task on a separate thread
                 LoginTask loginTask = new LoginTask(uiThreadMessageHandler, loginRequest,
-                        serverHost.getText().toString(),serverPort.getText().toString());
+                        serverHost,serverPort);
                 //get port and host from user);
                 ExecutorService executor = Executors.newSingleThreadExecutor();
                 executor.submit(loginTask);
+
+
+             /*   FragmentTransaction fragmentTransaction = getFragmentManager().beginTransaction();
+                LoginSecond fragment = new LoginSecond();
+                Bundle loginMessage = new Bundle();
+                loginMessage.putString("loginViewText",loginUsername+" " +loginPassword);
+                fragment.setArguments(loginMessage);
+                fragmentTransaction.replace(R.id.fragmentFrameLayout,fragment);
+                fragmentTransaction.commit();*/
+
+
 
                 if(listener != null) {
                     listener.notifyDone();
@@ -82,39 +167,7 @@ public class LoginFirst extends Fragment {
             }
         });
 
-      //  doneButton.setOnClickListener();
-
-        //Register Section
-
-
-        EditText newUsername = view.findViewById(R.id.newUsernameField);
-        EditText newPassword = view.findViewById(R.id.newPasswordField);
-        EditText newEmailAddress = view.findViewById(R.id.newEmailAddressField);
-        EditText newFirstName = view.findViewById(R.id.newFirstNameField);
-        EditText newLastName = view.findViewById(R.id.newLastNameField);
-        RadioGroup newGender = (RadioGroup) view.findViewById(R.id.radioGroup);
-
-        String registerUsername = newUsername.getText().toString();
-        String registerPassword = newPassword.getText().toString();
-        String registerEmailAddress = newEmailAddress.getText().toString();
-        String registerFirstName = newFirstName.getText().toString();
-        String registerLastName = newLastName.getText().toString();
-
-        RegisterRequest registerRequest = new RegisterRequest(registerUsername,registerPassword,registerEmailAddress,
-                registerFirstName,registerLastName,null);
-
-
-        newGender.setOnCheckedChangeListener(new RadioGroup.OnCheckedChangeListener() {
-            @Override
-            public void onCheckedChanged(RadioGroup group, int checkedId) {
-                if(checkedId == R.id.newFemale){
-                    registerRequest.setGender("FEMALE");
-                } else {
-                    registerRequest.setGender("MALE");
-                }
-            }
-        });
-        Button registerButton = view.findViewById(R.id.registerButton);
+        registerButton = view.findViewById(R.id.registerButton);
         registerButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -123,16 +176,18 @@ public class LoginFirst extends Fragment {
                     public void handleMessage(Message message) {
                         Bundle bundle = message.getData();
                         String stringResponse = bundle.getString("registerKey", "");
-
+                        Toast toast = Toast.makeText(getContext(), stringResponse, Toast.LENGTH_SHORT);
+                        toast.show();
                     }
                 };
 
                 // Create and execute the download task on a separate thread
                 RegisterTask registerTask = new RegisterTask(uiThreadMessageHandler, registerRequest,
-                        serverHost.getText().toString(),serverPort.getText().toString());
+                        serverHost,serverPort);
                         //get port and host from user);
                 ExecutorService executor = Executors.newSingleThreadExecutor();
                 executor.submit(registerTask);
+
 
             }
         });

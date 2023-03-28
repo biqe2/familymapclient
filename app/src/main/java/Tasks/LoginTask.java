@@ -35,24 +35,25 @@ public class LoginTask implements Runnable{
         ServerProxy serverProxy = new ServerProxy();
         LoginResponse loginResponse = serverProxy.login(request,serverHost,serverPort);
         if(loginResponse == null){
-            sendMessage("Error: processing longin for " + request.getUsername());
+            sendMessage("Error: processing longin");
+        } else {
+
+            DataCache data = DataCache.getInstance();
+            data.setLoginAuthtoken(loginResponse.getAuthtoken());
+            PersonResponse personResponse = serverProxy.getPeople(loginResponse.getAuthtoken(), serverHost, serverPort);
+            PersonModel[] personLists = personResponse.getData();
+            data.setPeople(personLists);
+            EventResponse eventResponse = serverProxy.getEvents(loginResponse.getAuthtoken(), serverHost, serverPort);
+            EventModel[] eventLists = eventResponse.getData();
+            data.setEvents(eventLists);
+            PersonModel userPerson = data.getPeople().get(loginResponse.getPersonID());
+            String firstName = userPerson.getFirstName();
+            String lastName = userPerson.getLastName();
+
+            //This is how you will get the specific name of the user
+
+            sendMessage("login was successful correctly for " + firstName + " " + lastName);
         }
-
-        DataCache data = DataCache.getInstance();
-        data.setLoginAuthtoken(loginResponse.getAuthtoken());
-        PersonResponse personResponse = serverProxy.getPeople(loginResponse.getAuthtoken(),serverHost,serverPort);
-        PersonModel[] personLists = personResponse.getData();
-        data.setPeople(personLists);
-        EventResponse eventResponse = serverProxy.getEvents(loginResponse.getAuthtoken(),serverHost,serverPort);
-        EventModel[] eventLists = eventResponse.getData();
-        data.setEvents(eventLists);
-        PersonModel userPerson = data.getPeople().get(loginResponse.getPersonID());
-        String firstName = userPerson.getFirstName();
-        String lastName = userPerson.getLastName();
-
-        //This is how you will get the specific name of the user
-
-        sendMessage("login was successful correctly for " + firstName + " " + lastName );
     }
 
     private void sendMessage(String message) {

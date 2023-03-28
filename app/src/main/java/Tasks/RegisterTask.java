@@ -30,9 +30,9 @@ public class RegisterTask implements Runnable{
         //maybe I can use the resquest to create a PersonModel and add it to the datacache.
         if(response == null){
             sendMessage("Error processing register");
+        } else {
+            sendMessage(response.getUsername() + "was registered correctly");
         }
-
-        sendMessage(response.getUsername() + "was registered correctly");
     }
 
     private void sendMessage(String message) {
