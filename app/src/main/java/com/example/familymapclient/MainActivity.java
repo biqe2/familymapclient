@@ -39,7 +39,7 @@ public class MainActivity extends AppCompatActivity implements LoginFirst.Listen
     @Override
     public void notifyDone() {
         FragmentManager fragmentManager = this.getSupportFragmentManager();
-        Fragment fragment = new LoginSecond();
+        Fragment fragment = new MapsFragment();
 
         fragmentManager.beginTransaction()
                 .replace(R.id.fragmentFrameLayout, fragment)

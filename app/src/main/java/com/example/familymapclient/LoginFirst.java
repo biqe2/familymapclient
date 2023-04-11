@@ -31,7 +31,7 @@ public class LoginFirst extends Fragment {
 
     private Listener listener;
     private ServerProxy serverProxy = new ServerProxy();
-    private String serverHost = "10.34.18.55";
+    private String serverHost = "10.37.178.31";
     private String serverPort = "8080";
     private String gender = "FEMALE";
     private LoginRequest loginRequest;
@@ -145,22 +145,6 @@ public class LoginFirst extends Fragment {
                 //get port and host from user);
                 ExecutorService executor = Executors.newSingleThreadExecutor();
                 executor.submit(loginTask);
-
-
-             /*   FragmentTransaction fragmentTransaction = getFragmentManager().beginTransaction();
-                LoginSecond fragment = new LoginSecond();
-                Bundle loginMessage = new Bundle();
-                loginMessage.putString("loginViewText",loginUsername+" " +loginPassword);
-                fragment.setArguments(loginMessage);
-                fragmentTransaction.replace(R.id.fragmentFrameLayout,fragment);
-                fragmentTransaction.commit();*/
-
-
-
-            /*    if(listener != null) {
-                    listener.notifyDone();
-                }*/
-
             }
         });
 

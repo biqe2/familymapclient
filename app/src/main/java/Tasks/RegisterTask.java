@@ -47,6 +47,8 @@ public class RegisterTask implements Runnable{
             PersonModel userPerson = data.getPeople().get(response.getPersonID());
             String firstName = userPerson.getFirstName();
             String lastName = userPerson.getLastName();
+
+
             sendMessage("Register was successful for " + firstName + " " + lastName);
         }
     }
