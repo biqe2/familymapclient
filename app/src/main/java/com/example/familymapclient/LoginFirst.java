@@ -31,7 +31,7 @@ public class LoginFirst extends Fragment {
 
     private Listener listener;
     private ServerProxy serverProxy = new ServerProxy();
-    private String serverHost = "192.168.252.170";
+    private String serverHost = "10.34.18.55";
     private String serverPort = "8080";
     private String gender = "FEMALE";
     private LoginRequest loginRequest;
@@ -100,10 +100,6 @@ public class LoginFirst extends Fragment {
         newFirstName.addTextChangedListener(textWatcher);
         newLastName.addTextChangedListener(textWatcher);
 
-
-
-
-
         newGender.setOnCheckedChangeListener(new RadioGroup.OnCheckedChangeListener() {
 
             @Override
@@ -129,15 +125,16 @@ public class LoginFirst extends Fragment {
                         Bundle bundle = message.getData();
                         String stringResponse = bundle.getString("loginKey", "");
                         //Create the toast
-                        Toast toast = Toast.makeText(getContext(), stringResponse, Toast.LENGTH_SHORT);
-                        toast.show();
-                     /*   if(stringResponse.equals("Error: processing longin")){
+                       // Toast toast = Toast.makeText(getContext(), stringResponse, Toast.LENGTH_SHORT);
+                        //toast.show();
+                        if(stringResponse.equals("Error:processing longin")){
                             Toast toast = Toast.makeText(getContext(), stringResponse, Toast.LENGTH_SHORT);
                             toast.show();
                         } else {
-                            Toast toast = Toast.makeText(getContext(), stringResponse, Toast.LENGTH_SHORT);
-                            toast.show();
-                        } */
+                            if(listener != null) {
+                                listener.notifyDone();
+                            }
+                        }
 
                     }
                 };
@@ -179,8 +176,14 @@ public class LoginFirst extends Fragment {
                     public void handleMessage(Message message) {
                         Bundle bundle = message.getData();
                         String stringResponse = bundle.getString("registerKey", "");
-                        Toast toast = Toast.makeText(getContext(), stringResponse, Toast.LENGTH_SHORT);
-                        toast.show();
+                        if(stringResponse.equals("Error:processing register")){
+                            Toast toast = Toast.makeText(getContext(), stringResponse, Toast.LENGTH_SHORT);
+                            toast.show();
+                        } else {
+                            if(listener != null) {
+                                listener.notifyDone();
+                            }
+                        }
                     }
                 };
 

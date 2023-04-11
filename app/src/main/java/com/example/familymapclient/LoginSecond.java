@@ -15,11 +15,11 @@ public class LoginSecond extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_login_second, container, false);
-        if(getArguments() != null){
+        /*if(getArguments() != null){
             TextView textView = view.findViewById(R.id.receivedLogin);
             String receivedText = getArguments().getString("loginViewText");
             textView.setText(receivedText);
-        }
+        }*/
 
 
         return view;

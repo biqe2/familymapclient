@@ -34,7 +34,7 @@ public class RegisterTask implements Runnable{
         RegisterResponse response = serverProxy.register(request,serverHost,serverPort);
         //maybe I can use the resquest to create a PersonModel and add it to the datacache.
         if(response == null || response.getMessage() != null){
-            sendMessage("Error processing register");
+            sendMessage("Error:processing register");
         } else {
             DataCache data = DataCache.getInstance();
             data.setLoginAuthtoken(response.getAuthtoken());
