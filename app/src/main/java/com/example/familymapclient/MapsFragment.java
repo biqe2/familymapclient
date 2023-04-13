@@ -122,6 +122,9 @@ public class MapsFragment extends Fragment{
             @Override
             public void onClick(View v) {
                 Intent intent = new Intent(getActivity(), PersonActivity.class);
+                Bundle mBundle = new Bundle();
+                mBundle.putString("personID",eventSelected.getPersonID());
+                intent.putExtras(mBundle);
                 startActivity(intent);
             }
         });

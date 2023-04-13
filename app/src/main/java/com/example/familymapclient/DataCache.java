@@ -12,6 +12,7 @@ import java.util.Set;
 import Model.EventModel;
 import Model.PersonModel;
 import Responses.PersonResponse;
+import java.lang.Object.*;
 
 public class DataCache {
         private static DataCache instance;
@@ -30,6 +31,7 @@ public class DataCache {
         //Map of each event stored by key = eventID
         private HashMap<String, EventModel> events;
         private String loginAuthtoken;
+      //  private TreeMultimap<String, EventModel> eventsByPersonID;
 
 
         public static void setInstance(DataCache instance) {
