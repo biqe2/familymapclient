@@ -77,22 +77,17 @@
                     android:textSize="11sp"/>
             </LinearLayout>
         </LinearLayout>
-        <!--
-        <android.support.v7.widget.RecyclerView
-            android:id="@+id/expandableList"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"/>
-            -->
+        <ExpandableListView
+            android:id="@+id/expandableListView"
+            android:layout_height="match_parent"
+            android:layout_width="match_parent"
+            android:indicatorLeft="?android:attr/expandableListPreferredItemIndicatorLeft"
+            android:divider="@android:color/darker_gray"
+            android:dividerHeight="0.5dp" />
 
     </LinearLayout>
 
-    <ExpandableListView
-        android:id="@+id/expandableListView"
-        android:layout_height="match_parent"
-        android:layout_width="match_parent"
-        android:indicatorLeft="?android:attr/expandableListPreferredItemIndicatorLeft"
-        android:divider="@android:color/darker_gray"
-        android:dividerHeight="0.5dp" />
+
 
 
 

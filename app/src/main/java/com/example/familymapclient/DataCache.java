@@ -64,6 +64,10 @@ public class DataCache {
                 }
         }
 
+        public void deleteEvent(String eventID) {
+                events.remove(eventID);
+        }
+
         public String getLoginAuthtoken() {
                 return loginAuthtoken;
         }

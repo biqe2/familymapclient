@@ -5,18 +5,22 @@ import androidx.recyclerview.widget.RecyclerView;
 
 
 import android.app.Person;
+import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseExpandableListAdapter;
 import android.widget.ExpandableListView;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import org.w3c.dom.Text;
 
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -36,11 +40,13 @@ public class PersonActivity extends AppCompatActivity {
 
 
 
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         selectedPersonID = getIntent().getExtras().getString("personID");
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_person);
+        getSupportActionBar().setTitle("Family Map: Person Details");
 
         TextView firstName = (TextView) findViewById(R.id.firstNameTitle);
         TextView lastName = (TextView) findViewById(R.id.lastNameTitle);
@@ -65,28 +71,44 @@ public class PersonActivity extends AppCompatActivity {
 
         for(Map.Entry<String,EventModel> entry: events.entrySet()){
             EventModel event = entry.getValue();
+
             if(event.getPersonID().equals(selectedPersonID)){
                 personEvents.add(event);
             }
         }
+        Collections.sort(personEvents, new Comparator<EventModel>() {
+            @Override
+            public int compare(EventModel o1, EventModel o2) {
+                return o1.getYear().compareTo(o2.getYear());
+            }
+        });
 
         Map<String, PersonModel> people =  data.getPeople();
 
         for(Map.Entry<String,PersonModel> entry: people.entrySet()){
             PersonModel person = entry.getValue();
-            //I might be able to make this one if statement with ors we will see.
-            if(personSelected.getFatherID().equals(person.getPersonID())){
-                father = person;
-                personFamily.add(father);
-            } else if(personSelected.getMotherID().equals(person.getPersonID())){
-                mother = person;
-                personFamily.add(mother);
-            } else if(personSelected.getSpouseID().equals(person.getPersonID())){
-                spouse = person;
-                personFamily.add(spouse);
-            } else if(selectedPersonID.equals(person.getFatherID()) || selectedPersonID.equals(person.getMotherID())){
-                child = person;
-                personFamily.add(child);
+
+            if(personSelected.getFatherID() != null || personSelected.getMotherID() != null) {
+                //I might be able to make this one if statement with ors we will see.
+                if (personSelected.getFatherID().equals(person.getPersonID())) {
+                    father = person;
+                    personFamily.add(father);
+                } else if (personSelected.getMotherID().equals(person.getPersonID())) {
+                    mother = person;
+                    personFamily.add(mother);
+                }
+            }
+            if(personSelected.getSpouseID() != null) {
+                if (personSelected.getSpouseID().equals(person.getPersonID())) {
+                    spouse = person;
+                    personFamily.add(spouse);
+                }
+            }
+            if(person.getFatherID() != null || person.getMotherID() != null) {
+                if (selectedPersonID.equals(person.getFatherID()) || selectedPersonID.equals(person.getMotherID())) {
+                    child = person;
+                    personFamily.add(child);
+                }
             }
         }
         expandableListView.setAdapter(new ExpandableListAdapter(personFamily,personEvents));
@@ -199,23 +221,38 @@ public class PersonActivity extends AppCompatActivity {
             TextView textBottom = familyView.findViewById(R.id.textBottom);
             textTop.setText(familyMember.getFirstName() + " " + familyMember.getLastName());
 
-            if(personSelected.getFatherID().equals(familyMember.getPersonID())){
-                textBottom.setText("Father");
-            } else if(personSelected.getMotherID().equals(familyMember.getPersonID())){
-                textBottom.setText("Mother");
-            } else if(personSelected.getSpouseID().equals(familyMember.getPersonID())){
-                textBottom.setText("Spouse");
-            } else if(selectedPersonID.equals(familyMember.getFatherID()) || selectedPersonID.equals(familyMember.getMotherID())){
-                textBottom.setText("Child");
+            if(personSelected.getFatherID() != null || personSelected.getMotherID() != null) {
+                //I might be able to make this one if statement with ors we will see.
+                if (personSelected.getFatherID().equals(familyMember.getPersonID())) {
+                    textBottom.setText("Father");
+                } else if (personSelected.getMotherID().equals(familyMember.getPersonID())) {
+                    textBottom.setText("Mother");
+                }
+            }
+            if(personSelected.getSpouseID() != null) {
+                if (personSelected.getSpouseID().equals(familyMember.getPersonID())) {
+                    textBottom.setText("Spouse");
+                }
+            }
+            if(familyMember.getFatherID() != null || familyMember.getMotherID() != null) {
+                if (selectedPersonID.equals(familyMember.getFatherID()) || selectedPersonID.equals(familyMember.getMotherID())) {
+                    textBottom.setText("Child");
+                }
             }
 
-
-          /*  familyView.setOnClickListener(new View.OnClickListener() {
+            LinearLayout familyMemberSelected = familyView.findViewById(R.id.personDetail);
+            familyMemberSelected.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    Toast.makeText(PersonActivity.this, getString(R.string.skiResortToastText, skiResorts.get(childPosition).getName()), Toast.LENGTH_SHORT).show();
+                    Intent intent = new Intent(PersonActivity.this,PersonActivity.class);
+                    intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK);
+                    Bundle mBundle = new Bundle();
+                    mBundle.putString("personID",familyMember.getPersonID());
+                    intent.putExtras(mBundle);
+                    startActivity(intent);
                 }
-            });*/
+            });
+
         }
 
         private void initializeExpandableListEvents(View eventView, final int childPosition) {
@@ -229,15 +266,23 @@ public class PersonActivity extends AppCompatActivity {
                     ", " + eventPerson.getCountry() + " (" + eventPerson.getYear() + ")");
             textBottom.setText(personSelected.getFirstName() + " " + personSelected.getLastName());
 
-
-
-
-          /*  familyView.setOnClickListener(new View.OnClickListener() {
+            LinearLayout familyMemberSelected = eventView.findViewById(R.id.personDetail);
+            familyMemberSelected.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    Toast.makeText(PersonActivity.this, getString(R.string.skiResortToastText, skiResorts.get(childPosition).getName()), Toast.LENGTH_SHORT).show();
+                    Intent intent = new Intent(PersonActivity.this,EventActivity.class);
+                    intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK);
+                    Bundle mBundle = new Bundle();
+                    mBundle.putString("eventID",eventPerson.getEventID());
+                    intent.putExtras(mBundle);
+                    startActivity(intent);
                 }
-            });*/
+            });
+
+
+
+
+
         }
 
         @Override
