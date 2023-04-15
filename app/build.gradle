@@ -9,7 +9,7 @@ android {
 
     defaultConfig {
         applicationId "com.example.familymapclient"
-        minSdk 20
+        minSdk 22
         targetSdk 33
         versionCode 1
         versionName "1.0"
@@ -20,6 +20,7 @@ android {
     buildTypes {
         release {
             minifyEnabled false
+           // shrinkResources true
             proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
         }
     }
@@ -48,4 +49,9 @@ dependencies {
     testImplementation 'junit:junit:4.13.2'
     androidTestImplementation 'androidx.test.ext:junit:1.1.5'
     androidTestImplementation 'androidx.test.espresso:espresso-core:3.5.1'
+    implementation 'com.google.maps.android:android-maps-utils:2.3.0'
+    implementation ('com.joanzapata.iconify:android-iconify:2.2.2',
+            {exclude group: 'com.android.support' })
+    implementation ('com.joanzapata.iconify:android-iconify-fontawesome:2.2.2',
+            { exclude group: 'com.android.support' })
 }

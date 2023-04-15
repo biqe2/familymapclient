@@ -9,6 +9,9 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.LayoutInflater;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
@@ -102,7 +105,7 @@ public class MapsFragment extends Fragment{
                     LatLng eventPlace = new LatLng(event.getLatitude(), event.getLongitude());
                    // Marker marker = mMap.addMarker(new MarkerOptions().position(eventPlace).title(event.getEventType()).icon(BitmapDescriptorFactory.defaultMarker(color)));
 
-                    Marker marker = mMap.addMarker(new MarkerOptions().position(eventPlace).title(event.getEventType()).icon(BitmapDescriptorFactory.defaultMarker(color)));
+                    Marker marker = mMap.addMarker(new MarkerOptions().position(eventPlace).title(event.getCity() + ", " + event.getCountry()).icon(BitmapDescriptorFactory.defaultMarker(color)));
                     marker.setTag(event);
                 } else {
                     invalidEvents.add(event.getEventID());
@@ -133,6 +136,7 @@ public class MapsFragment extends Fragment{
                 }
             });
 
+
         }
     };
 
@@ -144,6 +148,7 @@ public class MapsFragment extends Fragment{
                              @Nullable ViewGroup container,
                              @Nullable Bundle savedInstanceState) {
         view = inflater.inflate(R.layout.fragment_maps, container, false);
+
         return view;
     }
 
@@ -191,6 +196,43 @@ public class MapsFragment extends Fragment{
                 eventSelected.getCountry() +" (" + eventSelected.getYear() +")");
 
         personInfo = true;
+    }
+    @Override
+    public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
+        inflater.inflate(R.menu.menu, menu);
+        super.onCreateOptionsMenu(menu, inflater);
+        MenuItem searchIcon = menu.findItem(R.id.search);
+        searchIcon.setIcon(R.drawable.searchicon);
+        MenuItem configIcon = menu.findItem(R.id.settings);
+        configIcon.setIcon(R.drawable.configicon);
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        switch (item.getItemId()) {
+            case R.id.settings:
+
+                Intent intent = new Intent(getActivity(), SettingsActivity.class);
+                startActivity(intent);
+                return true;
+         /*   case R.id.show_subtitle:
+                mSubtitleVisible = !mSubtitleVisible;
+                getActivity().invalidateOptionsMenu();
+                updateSubtitle();
+                return true;*/
+            default:
+                return super.onOptionsItemSelected(item);
+        }
+    }
+
+    @Override
+    public void onCreate(Bundle savedInstanceState) {
+        if (eventComingActivity){
+            setHasOptionsMenu(false);
+        } else {
+            setHasOptionsMenu(true);
+        }
+        super.onCreate(savedInstanceState);
     }
 
 }
