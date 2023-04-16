@@ -209,17 +209,16 @@ public class MapsFragment extends Fragment{
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
+        Intent intent;
         switch (item.getItemId()) {
             case R.id.settings:
 
-                Intent intent = new Intent(getActivity(), SettingsActivity.class);
+                intent = new Intent(getActivity(), SettingsActivity.class);
                 startActivity(intent);
                 return true;
-         /*   case R.id.show_subtitle:
-                mSubtitleVisible = !mSubtitleVisible;
-                getActivity().invalidateOptionsMenu();
-                updateSubtitle();
-                return true;*/
+            case R.id.search:
+                intent = new Intent(getActivity(), SearchActivity.class);
+                startActivity(intent);
             default:
                 return super.onOptionsItemSelected(item);
         }

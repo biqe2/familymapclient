@@ -31,7 +31,7 @@ public class LoginFirst extends Fragment {
 
     private Listener listener;
     private ServerProxy serverProxy = new ServerProxy();
-    private String serverHost = "10.34.18.95";
+    private String serverHost = "10.34.18.118";
 
     private String serverPort = "8080";
     private String gender = "FEMALE";
