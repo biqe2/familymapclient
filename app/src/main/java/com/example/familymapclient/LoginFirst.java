@@ -36,13 +36,13 @@ public class LoginFirst extends Fragment {
     private String serverPort = "8080";
     private String gender = "FEMALE";
     private LoginRequest loginRequest;
-    EditText newUsername;
-    EditText newPassword;
-    EditText newEmailAddress;
-    EditText newFirstName;
-    EditText newLastName;
-    Button loginButton;
-    Button registerButton;
+    private EditText newUsername;
+    private EditText newPassword;
+    private EditText newEmailAddress;
+    private EditText newFirstName;
+    private EditText newLastName;
+    private Button loginButton;
+    private Button registerButton;
     private RegisterRequest registerRequest;
 
     public interface Listener {
@@ -109,9 +109,6 @@ public class LoginFirst extends Fragment {
             }
 
         });
-
-
-
 
 
         loginButton = view.findViewById(R.id.loginButton);

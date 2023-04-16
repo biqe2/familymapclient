@@ -6,14 +6,18 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import android.app.Person;
+import android.app.people.PeopleManager;
 import android.content.Intent;
 import android.media.metrics.Event;
 import android.os.Bundle;
+import android.text.Editable;
+import android.text.TextWatcher;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.ViewGroup;
+import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.SearchView;
@@ -33,18 +37,67 @@ public class SearchActivity extends AppCompatActivity {
     private static final int EVENTS_GROUP_POSITION = 1;
     private DataCache data;
 
-    private final List<PersonModel> searchedPeople = null;
-    private final List<EventModel> searchedEvents = null;
-    Map<String, EventModel> events;
-    Map<String, PersonModel> people;
+    private Map<String, EventModel> events;
+    private Map<String, PersonModel> people;
+
+    private EditText textSearched;
+
+    private TextWatcher textWatcher = new TextWatcher() {
+        @Override
+        public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+
+        }
+
+        @Override
+        public void onTextChanged(CharSequence s, int start, int before, int count) {
+            String text = textSearched.getText().toString().toLowerCase();
+            RecyclerView recyclerView = findViewById(R.id.recyclerView);
+            recyclerView.setLayoutManager(new LinearLayoutManager(SearchActivity.this));
+
+            List<EventModel> eventsSelected = new ArrayList<EventModel>();
+            List<PersonModel> peopleSelected = new ArrayList<PersonModel>();
+
+            for(Map.Entry<String,EventModel> entry: events.entrySet()){
+                EventModel event = entry.getValue();
+                StringBuilder sentence = new StringBuilder();
+                sentence.append(event.getCountry().toString().toLowerCase());
+                sentence.append(event.getCity().toString().toLowerCase());
+                sentence.append(event.getEventType().toString().toLowerCase());
+                sentence.append(event.getEventType().toString().toLowerCase());
+                sentence.append(event.getYear().toString().toLowerCase());
+                String sentence2 = sentence.toString();
+                if(sentence2.contains(text)){
+                    eventsSelected.add(event);
+                }
+            }
+
+            for(Map.Entry<String, PersonModel> entry: people.entrySet()){
+                PersonModel person = entry.getValue();
+                String sentence = person.getFirstName() + " " + person.getLastName();
+                sentence.toLowerCase();
+                if(person.getFirstName().toLowerCase().contains(text) || person.getLastName().toString().toLowerCase().contains(text)){
+                    peopleSelected.add(person);
+                }
+            }
+
+            if(!eventsSelected.isEmpty() || !peopleSelected.isEmpty()){
+                SearcherAdaptor adapter = new SearcherAdaptor(peopleSelected, eventsSelected);
+                recyclerView.setAdapter(adapter);
+            }
+        }
+
+        @Override
+        public void afterTextChanged(Editable s) {
+
+        }
+    };
 
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_search);
-        RecyclerView recyclerView = findViewById(R.id.recyclerView);
-        recyclerView.setLayoutManager(new LinearLayoutManager(SearchActivity.this));
+
         getSupportActionBar().setTitle("Family Map: Search");
 
         data = DataCache.getInstance();
@@ -52,10 +105,9 @@ public class SearchActivity extends AppCompatActivity {
         events =  data.getEvents();
         people =  data.getPeople();
 
-        List<EventModel> allEvents = new ArrayList<EventModel>();
-        List<PersonModel> allPeople = new ArrayList<PersonModel>();
 
-        for(Map.Entry<String,EventModel> entry: events.entrySet()){
+
+      /*  for(Map.Entry<String,EventModel> entry: events.entrySet()){
             EventModel event = entry.getValue();
             allEvents.add(event);
         }
@@ -63,24 +115,27 @@ public class SearchActivity extends AppCompatActivity {
         for(Map.Entry<String,PersonModel> entry: people.entrySet()){
             PersonModel person = entry.getValue();
             allPeople.add(person);
-        }
+        }*/
+        textSearched = findViewById(R.id.textSearched);
+        textSearched.addTextChangedListener(textWatcher);
 
-        SearcherAdaptor adapter = new SearcherAdaptor(allPeople, allEvents);
-        recyclerView.setAdapter(adapter);
+
+
+
 
     }
 
     private class SearcherAdaptor extends RecyclerView.Adapter<SearcherViewHolder>{
-        private final List<PersonModel> people;
-        private final List<EventModel> events;
+        private final List<PersonModel> peopleChosen;
+        private final List<EventModel> eventsChosen;
         SearcherAdaptor(List<PersonModel> people,List<EventModel> events){
-            this.events = events;
-            this.people = people;
+            this.eventsChosen = events;
+            this.peopleChosen = people;
         }
 
         @Override
         public int getItemViewType(int position) {
-            return position < people.size() ? PEOPLE_GROUP_POSITION : EVENTS_GROUP_POSITION;
+            return position < peopleChosen.size() ? PEOPLE_GROUP_POSITION : EVENTS_GROUP_POSITION;
         }
 
         @NonNull
@@ -93,16 +148,16 @@ public class SearchActivity extends AppCompatActivity {
 
         @Override
         public void onBindViewHolder(@NonNull SearcherViewHolder holder, int position) {
-            if(position < people.size()) {
-                holder.bind(people.get(position));
+            if(position < peopleChosen.size()) {
+                holder.bind(peopleChosen.get(position));
             } else {
-                holder.bind(events.get(position - people.size()));
+                holder.bind(eventsChosen.get(position - peopleChosen.size()));
             }
         }
 
         @Override
         public int getItemCount() {
-            return people.size() + events.size();
+            return peopleChosen.size() + eventsChosen.size();
         }
     }
 

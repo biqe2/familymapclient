@@ -19,13 +19,43 @@
     android:paddingBottom="2dp"
     tools:context=".SearchActivity">
 
-
-    <androidx.recyclerview.widget.RecyclerView
-        android:id="@+id/recyclerView"
+    <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="match_parent">
+        android:layout_height="match_parent"
+        android:orientation="vertical">
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal">
+            <ImageView
+                android:layout_width="25dp"
+                android:layout_height="25dp"
+                android:layout_gravity="center"
+                android:id="@+id/iconSearchOne"
+                android:src='@drawable/searchicon'/>
+            <GridLayout
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:rowCount="2"
+                android:columnCount="1"
+                android:padding="2dp"
+                android:layout_gravity="center">
+                <EditText
+                    android:id="@+id/textSearched"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_span="3"
+                    android:inputType="textPostalAddress"
+                    tools:text="I am looking for someone" />
+            </GridLayout>
+        </LinearLayout>
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/recyclerView"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent">
 
-    </androidx.recyclerview.widget.RecyclerView>
+        </androidx.recyclerview.widget.RecyclerView>
+    </LinearLayout>
 
 
 </RelativeLayout>
