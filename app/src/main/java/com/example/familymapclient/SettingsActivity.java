@@ -4,16 +4,37 @@ import androidx.appcompat.app.AppCompatActivity;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.RelativeLayout;
+import android.widget.Switch;
 
 public class SettingsActivity extends AppCompatActivity {
+
+    private Switch maleSwitch;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_settings);
+        maleSwitch = (Switch) findViewById(R.id.maleSwitch);
+        DataCache data = DataCache.getInstance();
+
+        maleSwitch.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Log.d("Click", "you changed the settings for male");
+                if(maleSwitch.isChecked()){
+                    data.setMaleFiltered(true);
+                } else {
+                    data.setMaleFiltered(false);
+                }
+            }
+        });
+
+
+
         getSupportActionBar().setTitle("Settings");
 
         RelativeLayout logout = (RelativeLayout) findViewById(R.id.logoutView);

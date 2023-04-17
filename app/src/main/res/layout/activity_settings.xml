@@ -220,7 +220,8 @@
                 <Switch
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_alignParentRight="true"/>
+                    android:layout_alignParentRight="true"
+                    />
             </LinearLayout>
 
         </RelativeLayout>
@@ -263,7 +264,8 @@
                 <Switch
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_alignParentRight="true"/>
+                    android:layout_alignParentRight="true"
+                    android:id="@+id/femaleSwitch"/>
             </LinearLayout>
 
         </RelativeLayout>
@@ -305,7 +307,9 @@
                 <Switch
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_alignParentRight="true"/>
+                    android:layout_alignParentRight="true"
+                    android:id="@+id/maleSwitch"
+                    android:checked="false"/>
             </LinearLayout>
 
         </RelativeLayout>

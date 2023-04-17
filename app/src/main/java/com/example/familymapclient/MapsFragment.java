@@ -4,6 +4,7 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 
+import android.app.Person;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
@@ -26,6 +27,8 @@ import com.google.android.gms.maps.model.BitmapDescriptorFactory;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
+import com.google.android.gms.maps.model.Polyline;
+import com.google.android.gms.maps.model.PolylineOptions;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -45,6 +48,7 @@ public class MapsFragment extends Fragment{
     private DataCache data = DataCache.getInstance();
     Map<String, EventModel> eventLists;
     Map<String, PersonModel> peopleLists;
+    private List<Polyline> polylines = new ArrayList<Polyline>();
 
     public Boolean getEventComingActivity() {
         return eventComingActivity;
@@ -130,7 +134,7 @@ public class MapsFragment extends Fragment{
 
                     eventSelected = (EventModel) marker.getTag();
                     selectedEvent(eventSelected);
-                    Log.d("Click", "was clicked");
+                    Log.d("Click", "was clicked you");
 
                     return false;
                 }
@@ -177,10 +181,20 @@ public class MapsFragment extends Fragment{
 
     public void selectedEvent(EventModel eventSelected){
 
+        PersonModel child;
+        PersonModel spouse = null;
+        PersonModel father;
+        PersonModel mother;
+        String selectedPersonID = new String();
+        selectedPersonID = eventSelected.getPersonID();
+
+        for(Polyline line : polylines){
+            line.remove();
+        }
+        polylines.clear();
+
         LatLng placeToCenter  = new LatLng(eventSelected.getLatitude(),eventSelected.getLongitude());
-       // mMap.animateCamera(CameraUpdateFactory.newLatLngZoom(placeToCenter, 15f));
         mMap.moveCamera(CameraUpdateFactory.newLatLng(placeToCenter));
-       // mMap.animateCamera(CameraUpdateFactory.zoomIn());
         PersonModel personSelected = peopleLists.get(eventSelected.getPersonID());
         ImageView img = (ImageView) view.findViewById(R.id.iconImageView);
         if(personSelected.getGender().equals("f")){
@@ -194,6 +208,52 @@ public class MapsFragment extends Fragment{
         textTop.setText(personSelected.getFirstName() + " " + personSelected.getLastName());
         textBottom.setText(eventSelected.getEventType().toUpperCase() + ": " + eventSelected.getCity() +  ", " +
                 eventSelected.getCountry() +" (" + eventSelected.getYear() +")");
+
+        //polylines
+
+        for(Map.Entry<String,PersonModel> entry: peopleLists.entrySet()){
+            PersonModel person = entry.getValue();
+
+            if(personSelected.getFatherID() != null || personSelected.getMotherID() != null) {
+                //I might be able to make this one if statement with ors we will see.
+                if (personSelected.getFatherID().equals(person.getPersonID())) {
+                    father = person;
+                } else if (personSelected.getMotherID().equals(person.getPersonID())) {
+                    mother = person;
+                }
+            }
+            if(personSelected.getSpouseID() != null) {
+                if (personSelected.getSpouseID().equals(person.getPersonID())) {
+                    spouse = person;
+                }
+            }
+            if(person.getFatherID() != null || person.getMotherID() != null) {
+                if (selectedPersonID.equals(person.getFatherID()) || selectedPersonID.equals(person.getMotherID())) {
+                    child = person;
+                }
+            }
+        }
+        if(spouse != null){
+            for(Map.Entry<String,EventModel> entry: eventLists.entrySet()) {
+                EventModel event = entry.getValue();
+                if(event.getPersonID().equals(spouse.getPersonID()) && event.getEventType().equals("Birth")){
+                    LatLng spouseBirth = new LatLng(event.getLatitude(),event.getLongitude());
+                    PolylineOptions spouseLine = new PolylineOptions()
+                            .add(placeToCenter)
+                            .add(spouseBirth)
+                            //yellow lines
+                            .color(0xffffff00);
+                    Polyline polylineSpouse = mMap.addPolyline(spouseLine);
+                    polylines.add(polylineSpouse);
+                }
+            }
+        }
+
+
+
+
+
+
 
         personInfo = true;
     }

@@ -31,7 +31,49 @@ public class DataCache {
         //Map of each event stored by key = eventID
         private HashMap<String, EventModel> events;
         private String loginAuthtoken;
-      //  private TreeMultimap<String, EventModel> eventsByPersonID;
+
+        private Boolean maleFiltered = false;
+        private Boolean femaleFiltered = false;
+        private HashMap<String, EventModel> filteredEvents;
+
+        public Boolean getMaleFiltered() {
+                return maleFiltered;
+        }
+
+        public void setMaleFiltered(Boolean maleFiltered) {
+                this.maleFiltered = maleFiltered;
+        }
+
+        public Boolean getFemaleFiltered() {
+                return femaleFiltered;
+        }
+
+        public void setFemaleFiltered(Boolean femaleFiltered) {
+                this.femaleFiltered = femaleFiltered;
+        }
+
+        public Map<String, EventModel> getFilteredEvents() {
+                if(maleFiltered){
+                        for(Map.Entry<String, EventModel> entry : events.entrySet()) {
+                                EventModel event = entry.getValue();
+                                String eventKey = entry.getKey();
+                                PersonModel person = people.get(event.getPersonID());
+                                if (person != null && eventKey != null && event != null) {
+                                        if (!person.getGender().equals("f")) {
+                                                filteredEvents.put(eventKey, event);
+                                        }
+                                }
+                        }
+                        return filteredEvents;
+                }
+
+                return events;
+        }
+
+        public void setFilteredEvents(HashMap<String, EventModel> filteredEvents) {
+                this.filteredEvents = filteredEvents;
+        }
+//  private TreeMultimap<String, EventModel> eventsByPersonID;
 
 
         public static void setInstance(DataCache instance) {
@@ -75,6 +117,8 @@ public class DataCache {
         public void setLoginAuthtoken(String loginAuthtoken) {
                 this.loginAuthtoken = loginAuthtoken;
         }
+
+
 
         /*Map<PersonId, List<Event>> personEvents;
         Set<PersonId> paternalAncestors;
