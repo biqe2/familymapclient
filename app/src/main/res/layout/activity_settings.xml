@@ -54,7 +54,8 @@
                 <Switch
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_alignParentRight="true"/>
+                    android:layout_alignParentRight="true"
+                    android:id="@+id/lifeStoryLinesSwitch"/>
             </LinearLayout>
 
         </RelativeLayout>
@@ -96,7 +97,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_alignParentRight="true"
-                    android:id="@+id/familyTreeLines"/>
+                    android:id="@+id/familyTreeLinesSwitch"/>
             </LinearLayout>
 
         </RelativeLayout>
@@ -180,7 +181,8 @@
                 <Switch
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_alignParentRight="true"/>
+                    android:layout_alignParentRight="true"
+                    android:id="@+id/mothersSideSwitch"/>
             </LinearLayout>
 
         </RelativeLayout>
@@ -223,7 +225,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_alignParentRight="true"
-                    />
+                    android:id="@+id/fathersSideSwitch"/>
             </LinearLayout>
 
         </RelativeLayout>

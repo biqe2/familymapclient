@@ -25,11 +25,13 @@ public class DataCache {
         private HashMap<String, EventModel> events;
         private String loginAuthtoken;
 
-        private Boolean maleFiltered = false;
-        private Boolean femaleFiltered = false;
-        private Boolean spouseLineSwitch = false;
-
-
+        private Boolean maleFiltered = true;
+        private Boolean femaleFiltered = true;
+        private Boolean spouseLineSwitch = true;
+        private Boolean familyTreeLinesSwitch = true;
+        private Boolean mothersSideSwitch = true;
+        private Boolean fathersSideSwitch = true;
+        private Boolean lifeStoryLinesSwitch = true;
 
         private HashMap<String, EventModel> filteredEvents;
         private HashMap<String, PersonModel> filteredPeople;
@@ -53,6 +55,54 @@ public class DataCache {
                 originalUser = new PersonModel();
                 paternalAncestors = new HashMap<>();
                 maternalAncestors = new HashMap<>();
+        }
+
+        public Boolean getFamilyTreeLinesSwitch() {
+                return familyTreeLinesSwitch;
+        }
+
+        public void setFamilyTreeLinesSwitch(Boolean familyTreeLinesSwitch) {
+                this.familyTreeLinesSwitch = familyTreeLinesSwitch;
+        }
+
+        public Boolean getMothersSideSwitch() {
+                return mothersSideSwitch;
+        }
+
+        public void setMothersSideSwitch(Boolean mothersSideSwitch) {
+                this.mothersSideSwitch = mothersSideSwitch;
+        }
+
+        public Boolean getFathersSideSwitch() {
+                return fathersSideSwitch;
+        }
+
+        public void setFathersSideSwitch(Boolean fathersSideSwitch) {
+                this.fathersSideSwitch = fathersSideSwitch;
+        }
+
+        public Boolean getLifeStoryLinesSwitch() {
+                return lifeStoryLinesSwitch;
+        }
+
+        public void setLifeStoryLinesSwitch(Boolean lifeStoryLinesSwitch) {
+                this.lifeStoryLinesSwitch = lifeStoryLinesSwitch;
+        }
+
+        public HashMap<String, PersonModel> getPaternalAncestors() {
+                return paternalAncestors;
+        }
+
+        public void setPaternalAncestors(HashMap<String, PersonModel> paternalAncestors) {
+                this.paternalAncestors = paternalAncestors;
+        }
+
+        public HashMap<String, PersonModel> getMaternalAncestors() {
+                return maternalAncestors;
+        }
+
+        public void setMaternalAncestors(HashMap<String, PersonModel> maternalAncestors) {
+                this.maternalAncestors = maternalAncestors;
         }
 
         public PersonModel getOriginalUser() {
@@ -92,9 +142,9 @@ public class DataCache {
                 this.femaleFiltered = femaleFiltered;
         }
         public Map<String, PersonModel> getFilteredPeople() {
-                if(maleFiltered || femaleFiltered) {
+                if(!maleFiltered || !femaleFiltered || !mothersSideSwitch || !fathersSideSwitch) {
                         filteredPeople = new HashMap<>();
-                        if (maleFiltered) {
+                        if (!femaleFiltered) {
                                 for (Map.Entry<String, PersonModel> entry : people.entrySet()) {
                                         PersonModel person = entry.getValue();
                                         String personKey = entry.getKey();
@@ -105,7 +155,8 @@ public class DataCache {
                                         }
                                 }
                         }
-                        if (femaleFiltered) {
+                        if (!maleFiltered) {
+
                                 for (Map.Entry<String, PersonModel> entry : people.entrySet()) {
                                         PersonModel person = entry.getValue();
                                         String personKey = entry.getKey();
@@ -113,6 +164,26 @@ public class DataCache {
                                                 if (person.getGender().equals("f")) {
                                                         filteredPeople.put(personKey, person);
                                                 }
+                                        }
+                                }
+                        }
+                        if (!fathersSideSwitch) {
+                                Map<String, PersonModel> maternalOnly = getMaternalAncestors();
+                                for (Map.Entry<String, PersonModel> entry : maternalOnly.entrySet()) {
+                                        PersonModel person = entry.getValue();
+                                        String personKey = entry.getKey();
+                                        if (person != null && personKey != null) {
+                                                filteredPeople.put(personKey, person);
+                                        }
+                                }
+                        }
+                        if (!mothersSideSwitch) {
+                                Map<String, PersonModel> parentalOnly = getPaternalAncestors();
+                                for (Map.Entry<String, PersonModel> entry : parentalOnly.entrySet()) {
+                                        PersonModel person = entry.getValue();
+                                        String personKey = entry.getKey();
+                                        if (person != null && personKey != null) {
+                                                filteredPeople.put(personKey, person);
                                         }
                                 }
                         }
@@ -122,9 +193,9 @@ public class DataCache {
                 return people;
         }
         public Map<String, EventModel> getFilteredEvents() {
-                if(maleFiltered || femaleFiltered) {
+                if(!maleFiltered || !femaleFiltered || !mothersSideSwitch || !fathersSideSwitch) {
                         filteredEvents = new HashMap<>();
-                        if (maleFiltered) {
+                        if (!femaleFiltered) {
                                 for (Map.Entry<String, EventModel> entry : events.entrySet()) {
                                         EventModel event = entry.getValue();
                                         String eventKey = entry.getKey();
@@ -137,7 +208,7 @@ public class DataCache {
                                 }
 
                         }
-                        if (femaleFiltered) {
+                        if (!maleFiltered) {
                                 for (Map.Entry<String, EventModel> entry : events.entrySet()) {
                                         EventModel event = entry.getValue();
                                         String eventKey = entry.getKey();
@@ -150,6 +221,46 @@ public class DataCache {
                                 }
 
                         }
+                        if (!fathersSideSwitch) {
+                                Map<String, PersonModel> maternalOnly = getMaternalAncestors();
+                                for (Map.Entry<String, PersonModel> entry : maternalOnly.entrySet()) {
+                                        PersonModel person = entry.getValue();
+                                        String personKey = entry.getKey();
+                                        if (person != null && personKey != null && personKey != null) {
+                                                for (Map.Entry<String, EventModel> entry2 : events.entrySet()) {
+                                                        EventModel event = entry2.getValue();
+                                                        String eventKey = entry2.getKey();
+                                                        if (person != null && eventKey != null && event != null) {
+                                                                if (personKey.equals(event.getPersonID())) {
+                                                                        filteredEvents.put(eventKey, event);
+                                                                }
+                                                        }
+                                                }
+                                        }
+                                }
+
+                        }
+
+                        if (!mothersSideSwitch) {
+                                Map<String, PersonModel> parentalOnly = getPaternalAncestors();
+                                for (Map.Entry<String, PersonModel> entry : parentalOnly.entrySet()) {
+                                        PersonModel person = entry.getValue();
+                                        String personKey = entry.getKey();
+                                        if (person != null && personKey != null && personKey != null) {
+                                                for (Map.Entry<String, EventModel> entry2 : events.entrySet()) {
+                                                        EventModel event = entry2.getValue();
+                                                        String eventKey = entry2.getKey();
+                                                        if (person != null && eventKey != null && event != null) {
+                                                                if (personKey.equals(event.getPersonID())) {
+                                                                        filteredEvents.put(eventKey, event);
+                                                                }
+                                                        }
+                                                }
+                                        }
+                                }
+
+                        }
+
                         return filteredEvents;
                 }
 
@@ -208,6 +319,9 @@ public class DataCache {
         public void createPaternalAndMaternalLines(){
                 PersonModel motherOfUser = people.get(originalUser.getMotherID());
                 PersonModel fatherOfUser = people.get(originalUser.getFatherID());
+                //Do I need to have my same user when I am filtering one side of the fam?
+                maternalAncestors.put(originalUser.getPersonID(),originalUser);
+                paternalAncestors.put(originalUser.getPersonID(),originalUser);
 
                 addParentsToMaternalOrPaternal(motherOfUser,true);
                 addParentsToMaternalOrPaternal(fatherOfUser,false);

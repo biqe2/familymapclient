@@ -80,9 +80,13 @@ public class SearchActivity extends AppCompatActivity {
                 }
             }
 
+
+
             if(!eventsSelected.isEmpty() || !peopleSelected.isEmpty()){
                 SearcherAdaptor adapter = new SearcherAdaptor(peopleSelected, eventsSelected);
                 recyclerView.setAdapter(adapter);
+            } else{
+
             }
         }
 

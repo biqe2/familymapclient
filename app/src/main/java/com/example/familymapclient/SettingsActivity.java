@@ -15,7 +15,10 @@ public class SettingsActivity extends AppCompatActivity {
     private Switch maleSwitch;
     private Switch femaleSwitch;
     private Switch spouseLineSwitch;
-    private Switch familyTreeLines;
+    private Switch familyTreeLinesSwitch;
+    private Switch mothersSideSwitch;
+    private Switch fathersSideSwitch;
+    private Switch lifeStoryLinesSwitch;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -25,12 +28,18 @@ public class SettingsActivity extends AppCompatActivity {
         maleSwitch = (Switch) findViewById(R.id.maleSwitch);
         femaleSwitch = (Switch) findViewById(R.id.femaleSwitch);
         spouseLineSwitch = (Switch) findViewById(R.id.spouseLineSwitch);
-        familyTreeLines = (Switch) findViewById(R.id.familyTreeLines);
+        familyTreeLinesSwitch = (Switch) findViewById(R.id.familyTreeLinesSwitch);
+        mothersSideSwitch = (Switch) findViewById(R.id.mothersSideSwitch);
+        fathersSideSwitch = (Switch) findViewById(R.id.fathersSideSwitch);
+        lifeStoryLinesSwitch = (Switch) findViewById(R.id.lifeStoryLinesSwitch);
         DataCache data = DataCache.getInstance();
         maleSwitch.setChecked(data.getMaleFiltered());
         femaleSwitch.setChecked(data.getFemaleFiltered());
         spouseLineSwitch.setChecked(data.getSpouseLineSwitch());
-        familyTreeLines.setChecked(data.getSpouseLineSwitch());
+        familyTreeLinesSwitch.setChecked(data.getFamilyTreeLinesSwitch());
+        mothersSideSwitch.setChecked(data.getMothersSideSwitch());
+        fathersSideSwitch.setChecked(data.getFathersSideSwitch());
+        lifeStoryLinesSwitch.setChecked(data.getLifeStoryLinesSwitch());
 
         maleSwitch.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -67,7 +76,53 @@ public class SettingsActivity extends AppCompatActivity {
             }
         });
 
+        familyTreeLinesSwitch.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Log.d("Click", "you changed the settings for female");
+                if(familyTreeLinesSwitch.isChecked()){
+                    data.setFamilyTreeLinesSwitch(true);
+                } else {
+                    data.setFamilyTreeLinesSwitch(false);
+                }
+            }
+        });
 
+        mothersSideSwitch.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Log.d("Click", "you changed the settings for female");
+                if(mothersSideSwitch.isChecked()){
+                    data.setMothersSideSwitch(true);
+                } else {
+                    data.setMothersSideSwitch(false);
+                }
+            }
+        });
+
+        fathersSideSwitch.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Log.d("Click", "you changed the settings for female");
+                if(fathersSideSwitch.isChecked()){
+                    data.setFathersSideSwitch(true);
+                } else {
+                    data.setFathersSideSwitch(false);
+                }
+            }
+        });
+
+        lifeStoryLinesSwitch.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Log.d("Click", "you changed the settings for female");
+                if(lifeStoryLinesSwitch.isChecked()){
+                    data.setLifeStoryLinesSwitch(true);
+                } else {
+                    data.setLifeStoryLinesSwitch(false);
+                }
+            }
+        });
 
         RelativeLayout logout = (RelativeLayout) findViewById(R.id.logoutView);
         logout.setOnClickListener(new View.OnClickListener() {
