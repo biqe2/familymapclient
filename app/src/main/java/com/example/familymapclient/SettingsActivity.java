@@ -13,13 +13,24 @@ import android.widget.Switch;
 public class SettingsActivity extends AppCompatActivity {
 
     private Switch maleSwitch;
+    private Switch femaleSwitch;
+    private Switch spouseLineSwitch;
+    private Switch familyTreeLines;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_settings);
+        getSupportActionBar().setTitle("Settings");
         maleSwitch = (Switch) findViewById(R.id.maleSwitch);
+        femaleSwitch = (Switch) findViewById(R.id.femaleSwitch);
+        spouseLineSwitch = (Switch) findViewById(R.id.spouseLineSwitch);
+        familyTreeLines = (Switch) findViewById(R.id.familyTreeLines);
         DataCache data = DataCache.getInstance();
+        maleSwitch.setChecked(data.getMaleFiltered());
+        femaleSwitch.setChecked(data.getFemaleFiltered());
+        spouseLineSwitch.setChecked(data.getSpouseLineSwitch());
+        familyTreeLines.setChecked(data.getSpouseLineSwitch());
 
         maleSwitch.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -33,9 +44,30 @@ public class SettingsActivity extends AppCompatActivity {
             }
         });
 
+        femaleSwitch.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Log.d("Click", "you changed the settings for female");
+                if(femaleSwitch.isChecked()){
+                    data.setFemaleFiltered(true);
+                } else {
+                    data.setFemaleFiltered(false);
+                }
+            }
+        });
+        spouseLineSwitch.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Log.d("Click", "you changed the settings for female");
+                if(spouseLineSwitch.isChecked()){
+                    data.setSpouseLineSwitch(true);
+                } else {
+                    data.setSpouseLineSwitch(false);
+                }
+            }
+        });
 
 
-        getSupportActionBar().setTitle("Settings");
 
         RelativeLayout logout = (RelativeLayout) findViewById(R.id.logoutView);
         logout.setOnClickListener(new View.OnClickListener() {
@@ -43,6 +75,7 @@ public class SettingsActivity extends AppCompatActivity {
             public void onClick(View v) {
                 Intent intent = new Intent(SettingsActivity.this,MainActivity.class);
                 startActivity(intent);
+
             }
         });
     }

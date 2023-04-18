@@ -31,7 +31,7 @@ public class LoginFirst extends Fragment {
 
     private Listener listener;
     private ServerProxy serverProxy = new ServerProxy();
-    private String serverHost = "10.34.18.118";
+    private String serverHost = "10.34.18.105";
 
     private String serverPort = "8080";
     private String gender = "FEMALE";
@@ -86,11 +86,11 @@ public class LoginFirst extends Fragment {
 
         View view = inflater.inflate(R.layout.fragment_login_first, container, false);
 
-         newUsername = view.findViewById(R.id.newUsernameField);
-         newPassword = view.findViewById(R.id.newPasswordField);
-         newEmailAddress = view.findViewById(R.id.newEmailAddressField);
-         newFirstName = view.findViewById(R.id.newFirstNameField);
-         newLastName = view.findViewById(R.id.newLastNameField);
+        newUsername = view.findViewById(R.id.newUsernameField);
+        newPassword = view.findViewById(R.id.newPasswordField);
+        newEmailAddress = view.findViewById(R.id.newEmailAddressField);
+        newFirstName = view.findViewById(R.id.newFirstNameField);
+        newLastName = view.findViewById(R.id.newLastNameField);
         RadioGroup newGender = view.findViewById(R.id.radioGroup);
         loginButton = view.findViewById(R.id.loginButton);
         registerButton = view.findViewById(R.id.registerButton);
@@ -122,9 +122,6 @@ public class LoginFirst extends Fragment {
                     public void handleMessage(Message message) {
                         Bundle bundle = message.getData();
                         String stringResponse = bundle.getString("loginKey", "");
-                        //Create the toast
-                       // Toast toast = Toast.makeText(getContext(), stringResponse, Toast.LENGTH_SHORT);
-                        //toast.show();
                         if(stringResponse.equals("Error:processing longin")){
                             Toast toast = Toast.makeText(getContext(), stringResponse, Toast.LENGTH_SHORT);
                             toast.show();
@@ -140,7 +137,6 @@ public class LoginFirst extends Fragment {
                 // Create and execute the download task on a separate thread
                 LoginTask loginTask = new LoginTask(uiThreadMessageHandler, loginRequest,
                         serverHost,serverPort);
-                //get port and host from user);
                 ExecutorService executor = Executors.newSingleThreadExecutor();
                 executor.submit(loginTask);
             }
@@ -185,15 +181,6 @@ public class LoginFirst extends Fragment {
 
 
 
-/*
-        doneButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                if(listener != null) {
-                    listener.notifyDone();
-                }
-            }
-        });*/
 
         return view;
     }

@@ -49,6 +49,8 @@ public class LoginTask implements Runnable{
             PersonModel userPerson = data.getPeople().get(loginResponse.getPersonID());
             String firstName = userPerson.getFirstName();
             String lastName = userPerson.getLastName();
+            data.setOriginalUser(userPerson);
+
 
             //This is how you will get the specific name of the user
 

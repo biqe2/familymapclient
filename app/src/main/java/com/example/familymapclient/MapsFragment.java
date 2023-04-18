@@ -18,6 +18,7 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
@@ -31,8 +32,14 @@ import com.google.android.gms.maps.model.Polyline;
 import com.google.android.gms.maps.model.PolylineOptions;
 
 import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.Comparator;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Random;
+import java.util.Set;
 
 import Model.EventModel;
 import Model.PersonModel;
@@ -46,8 +53,9 @@ public class MapsFragment extends Fragment{
     private String eventID;
     private Context pastActivity;
     private DataCache data = DataCache.getInstance();
-    Map<String, EventModel> eventLists;
-    Map<String, PersonModel> peopleLists;
+    private Map<String, EventModel> eventLists;
+    private Map<String, PersonModel> peopleLists;
+
     private List<Polyline> polylines = new ArrayList<Polyline>();
 
     public Boolean getEventComingActivity() {
@@ -90,59 +98,71 @@ public class MapsFragment extends Fragment{
             mMap = googleMap;
             eventLists = data.getEvents();
             peopleLists = data.getPeople();
-            Integer color;
             List<String> invalidEvents = new ArrayList<>();
 
             for(Map.Entry<String, EventModel> entry : eventLists.entrySet()){
-
                 EventModel event = entry.getValue();
                 PersonModel person = peopleLists.get(event.getPersonID());
-
-                if(person != null) {
-                    if (event.getEventType().equals("Birth")) {
-                        color = 120;
-                    } else if (event.getEventType().equals("Death")) {
-                        color = 0;
-                    } else {
-                        color = 300;
-                    }
-                    LatLng eventPlace = new LatLng(event.getLatitude(), event.getLongitude());
-                   // Marker marker = mMap.addMarker(new MarkerOptions().position(eventPlace).title(event.getEventType()).icon(BitmapDescriptorFactory.defaultMarker(color)));
-
-                    Marker marker = mMap.addMarker(new MarkerOptions().position(eventPlace).title(event.getCity() + ", " + event.getCountry()).icon(BitmapDescriptorFactory.defaultMarker(color)));
-                    marker.setTag(event);
-                } else {
+                if(person == null){
                     invalidEvents.add(event.getEventID());
                 }
             }
-
             for(int i = 0; i< invalidEvents.size(); i++){
                 eventLists.remove(invalidEvents.get(i));
                 data.deleteEvent(invalidEvents.get(i));
             }
-
-
-
-            if(eventComingActivity){
-                eventSelected = eventLists.get(eventID);
-                selectedEvent(eventSelected);
-            }
-
-            mMap.setOnMarkerClickListener(new GoogleMap.OnMarkerClickListener() {
-                @Override
-                public boolean onMarkerClick(@NonNull Marker marker) {
-
-                    eventSelected = (EventModel) marker.getTag();
-                    selectedEvent(eventSelected);
-                    Log.d("Click", "was clicked you");
-
-                    return false;
-                }
-            });
-
-
+            data.createPaternalAndMaternalLines();
+            drawMap(eventLists,peopleLists);
         }
     };
+
+    public void drawMap(Map<String, EventModel> eventMap, Map<String, PersonModel> peopleMap){
+        Map<String,Integer> eventsType = new HashMap<String,Integer>();
+
+        for(Map.Entry<String, EventModel> entry : eventMap.entrySet()){
+            Integer color;
+            Random random = new Random();
+            EventModel event = entry.getValue();
+            PersonModel person = peopleMap.get(event.getPersonID());
+            String eventType = event.getEventType();
+            Boolean mapEmpty = eventsType.isEmpty();
+            if(mapEmpty){//eventsType == null){
+                color = random.nextInt(350);
+                eventsType.put(eventType, color);
+            } else {
+                Integer type = eventsType.get(eventType);
+                if(type == null){
+                    color = random.nextInt(350);
+                    eventsType.put(eventType, color);
+                } else {
+                    color = eventsType.get(eventType);
+                }
+            }
+            if(person != null) {
+                LatLng eventPlace = new LatLng(event.getLatitude(), event.getLongitude());
+                Marker marker = mMap.addMarker(new MarkerOptions().position(eventPlace).title(event.getCity() +
+                        ", " + event.getCountry()).icon(BitmapDescriptorFactory.defaultMarker(color)));
+                marker.setTag(event);
+            }
+        }
+
+        if(eventComingActivity){
+            eventSelected = eventMap.get(eventID);
+            selectedEvent(eventSelected, eventMap, peopleMap);
+        }
+
+        mMap.setOnMarkerClickListener(new GoogleMap.OnMarkerClickListener() {
+            @Override
+            public boolean onMarkerClick(@NonNull Marker marker) {
+
+                eventSelected = (EventModel) marker.getTag();
+                selectedEvent(eventSelected, eventMap,peopleMap);
+                Log.d("Click", "was clicked you");
+
+                return false;
+            }
+        });
+    }
 
 
 
@@ -179,14 +199,15 @@ public class MapsFragment extends Fragment{
         });
     }
 
-    public void selectedEvent(EventModel eventSelected){
+    public void selectedEvent(EventModel eventSelected, Map<String, EventModel> eventMap, Map<String, PersonModel> peopleMap){
 
         PersonModel child;
         PersonModel spouse = null;
-        PersonModel father;
-        PersonModel mother;
+        PersonModel father = null;
+        PersonModel mother = null;
         String selectedPersonID = new String();
         selectedPersonID = eventSelected.getPersonID();
+
 
         for(Polyline line : polylines){
             line.remove();
@@ -195,7 +216,7 @@ public class MapsFragment extends Fragment{
 
         LatLng placeToCenter  = new LatLng(eventSelected.getLatitude(),eventSelected.getLongitude());
         mMap.moveCamera(CameraUpdateFactory.newLatLng(placeToCenter));
-        PersonModel personSelected = peopleLists.get(eventSelected.getPersonID());
+        PersonModel personSelected = peopleMap.get(eventSelected.getPersonID());
         ImageView img = (ImageView) view.findViewById(R.id.iconImageView);
         if(personSelected.getGender().equals("f")){
             img.setImageResource(R.drawable.femaleicon);
@@ -211,11 +232,10 @@ public class MapsFragment extends Fragment{
 
         //polylines
 
-        for(Map.Entry<String,PersonModel> entry: peopleLists.entrySet()){
+        for(Map.Entry<String,PersonModel> entry: peopleMap.entrySet()){
             PersonModel person = entry.getValue();
 
             if(personSelected.getFatherID() != null || personSelected.getMotherID() != null) {
-                //I might be able to make this one if statement with ors we will see.
                 if (personSelected.getFatherID().equals(person.getPersonID())) {
                     father = person;
                 } else if (personSelected.getMotherID().equals(person.getPersonID())) {
@@ -233,11 +253,14 @@ public class MapsFragment extends Fragment{
                 }
             }
         }
-        if(spouse != null){
-            for(Map.Entry<String,EventModel> entry: eventLists.entrySet()) {
-                EventModel event = entry.getValue();
-                if(event.getPersonID().equals(spouse.getPersonID()) && event.getEventType().equals("Birth")){
-                    LatLng spouseBirth = new LatLng(event.getLatitude(),event.getLongitude());
+      //  if(data.getSpouseLineSwitch()) {
+            if (spouse != null) {
+                List<EventModel> spouseEvents = new ArrayList<EventModel>();
+                spouseEvents = findEventsUser(spouse);
+
+                if (!spouseEvents.isEmpty()) {
+                    EventModel event = spouseEvents.get(0);
+                    LatLng spouseBirth = new LatLng(event.getLatitude(), event.getLongitude());
                     PolylineOptions spouseLine = new PolylineOptions()
                             .add(placeToCenter)
                             .add(spouseBirth)
@@ -247,13 +270,68 @@ public class MapsFragment extends Fragment{
                     polylines.add(polylineSpouse);
                 }
             }
+     //   }
+
+        if(father != null){
+            List<EventModel> fatherEvents = new ArrayList<EventModel>();
+            fatherEvents = findEventsUser(father);
+
+            if(!fatherEvents.isEmpty()){
+                EventModel event = fatherEvents.get(0);
+                LatLng spouseBirth = new LatLng(event.getLatitude(),event.getLongitude());
+                float lineWidth = 20;
+                PolylineOptions spouseLine = new PolylineOptions()
+                        .add(placeToCenter)
+                        .add(spouseBirth)
+                        //green lines
+                        .color(0xff00ff00)
+                        .width(lineWidth);
+                Polyline polylineSpouse = mMap.addPolyline(spouseLine);
+                polylines.add(polylineSpouse);
+                generateFamilyLines(father,spouseBirth,lineWidth);
+            }
         }
 
+        if(mother != null){
+            List<EventModel> motherEvents = new ArrayList<EventModel>();
+            motherEvents = findEventsUser(mother);
+            if(!motherEvents.isEmpty()){
+                EventModel event = motherEvents.get(0);
+                LatLng spouseBirth = new LatLng(event.getLatitude(),event.getLongitude());
+                float lineWidth = 20;
+                PolylineOptions spouseLine = new PolylineOptions()
+                        .add(placeToCenter)
+                        .add(spouseBirth)
+                        //blue lines
+                        .color(0xff0000ff)
+                        .width(lineWidth);
 
+                Polyline polylineSpouse = mMap.addPolyline(spouseLine);
+                polylines.add(polylineSpouse);
+                generateFamilyLines(mother,spouseBirth,lineWidth);
+            }
+        }
 
+        List<LatLng> personEvents = new ArrayList<LatLng>();
+        for(Map.Entry<String,EventModel> entry: eventMap.entrySet()) {
+            EventModel event = entry.getValue();
+            if(event.getPersonID().equals(personSelected.getPersonID())){
+                LatLng newEvent = new LatLng(event.getLatitude(),event.getLongitude());
+                personEvents.add(newEvent);
+            }
+        }
 
-
-
+        if(!personEvents.isEmpty()){
+            for(LatLng pEvent:personEvents){
+                PolylineOptions eventLine = new PolylineOptions()
+                        .add(placeToCenter)
+                        .add(pEvent)
+                        //magenta lines
+                        .color(0xffff00ff);
+                Polyline polylineEvent = mMap.addPolyline(eventLine);
+                polylines.add(polylineEvent);
+            }
+        }
 
         personInfo = true;
     }
@@ -293,5 +371,90 @@ public class MapsFragment extends Fragment{
         }
         super.onCreate(savedInstanceState);
     }
+
+    @Override
+    public void onResume(){
+        super.onResume();
+        Boolean originalMap = false;
+        if(!data.getMaleFiltered() && !data.getFemaleFiltered()){
+
+        }
+        if(data.getMaleFiltered() || data.getFemaleFiltered()) {
+            Map<String, EventModel> selectedEvents = data.getFilteredEvents();
+            Map<String, PersonModel> selectedPeople = data.getFilteredPeople();
+            mMap.clear();
+            drawMap(selectedEvents, selectedPeople);
+        } /*else {//if(originalMap){
+            Map<String, EventModel> selectedEvents = data.getEvents();
+            Map<String, PersonModel> selectedPeople = data.getPeople();
+            mMap.clear();
+            drawMap(selectedEvents, selectedPeople);
+        }*/
+
+        System.out.println("On Resume is working");
+    }
+
+    public void generateFamilyLines(PersonModel user, LatLng orgLocation,float lineWidth){
+        PersonModel father = peopleLists.get(user.getFatherID());
+        PersonModel mother = peopleLists.get(user.getMotherID());
+        if(father == null || user.getFatherID().equals("")){
+            return;
+        } else{
+            List<EventModel> fatherEventLines = findEventsUser(father);
+            if(!fatherEventLines.isEmpty()){
+                EventModel event = fatherEventLines.get(0);
+                LatLng fatherEventLine = new LatLng(event.getLatitude(),event.getLongitude());
+                float lineWidthFather = lineWidth - 2;
+                PolylineOptions fatherLine = new PolylineOptions()
+                        .add(orgLocation)
+                        .add(fatherEventLine)
+                        //gray lines
+                        .color(0xff888888)
+                        .width(lineWidthFather);
+                Polyline polylineSpouse = mMap.addPolyline(fatherLine);
+                polylines.add(polylineSpouse);
+                generateFamilyLines(father,fatherEventLine, lineWidthFather);
+            }
+        }
+        if(mother == null || user.getMotherID().equals("")){
+            return;
+        } else{
+            List<EventModel> motherEventLines = findEventsUser(mother);
+            if(!motherEventLines.isEmpty()){
+                EventModel event = motherEventLines.get(0);
+                LatLng motherEventLine = new LatLng(event.getLatitude(),event.getLongitude());
+                float lineWidthMother = lineWidth - 2;
+                PolylineOptions motherLine = new PolylineOptions()
+                        .add(orgLocation)
+                        .add(motherEventLine)
+                        //gray lines
+                        .color(0xff888888)
+                        .width(lineWidthMother);
+                Polyline polylineSpouse = mMap.addPolyline(motherLine);
+                polylines.add(polylineSpouse);
+                generateFamilyLines(father,motherEventLine,lineWidthMother);
+            }
+        }
+    }
+
+    public List<EventModel> findEventsUser(PersonModel person){
+        List<EventModel> personEvents = new ArrayList<EventModel>();
+        String personID = person.getPersonID();
+        for(Map.Entry<String,EventModel> entry: eventLists.entrySet()){
+            EventModel personEvent = entry.getValue();
+
+            if(personEvent.getPersonID().equals(personID)){
+                personEvents.add(personEvent);
+            }
+        }
+        Collections.sort(personEvents, new Comparator<EventModel>() {
+            @Override
+            public int compare(EventModel o1, EventModel o2) {
+                return o1.getYear().compareTo(o2.getYear());
+            }
+        });
+        return personEvents;
+    }
+
 
 }
