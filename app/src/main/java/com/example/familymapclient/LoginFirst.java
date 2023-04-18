@@ -31,7 +31,7 @@ public class LoginFirst extends Fragment {
 
     private Listener listener;
     private ServerProxy serverProxy = new ServerProxy();
-    private String serverHost = "10.37.178.31";
+    private String serverHost = "192.168.253.73";
 
     private String serverPort = "8080";
     private String gender = "FEMALE";
@@ -56,9 +56,7 @@ public class LoginFirst extends Fragment {
     private TextWatcher textWatcher = new TextWatcher() {
         @Override
         public void beforeTextChanged(CharSequence s, int start, int count, int after) {
-
         }
-
         @Override
         public void onTextChanged(CharSequence s, int start, int before, int count) {
             String usernameInput = newUsername.getText().toString();
@@ -76,9 +74,6 @@ public class LoginFirst extends Fragment {
 
         }
     };
-        // RegisterResponse registerResponse = new RegisterResponse();
-
-
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -168,19 +163,11 @@ public class LoginFirst extends Fragment {
                 // Create and execute the download task on a separate thread
                 RegisterTask registerTask = new RegisterTask(uiThreadMessageHandler, registerRequest,
                         serverHost,serverPort);
-                        //get port and host from user);
                 ExecutorService executor = Executors.newSingleThreadExecutor();
                 executor.submit(registerTask);
 
-
             }
         });
-
-
-
-
-
-
 
         return view;
     }

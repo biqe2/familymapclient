@@ -81,13 +81,9 @@ public class SearchActivity extends AppCompatActivity {
             }
 
 
+            SearcherAdaptor adapter = new SearcherAdaptor(peopleSelected, eventsSelected);
+            recyclerView.setAdapter(adapter);
 
-            if(!eventsSelected.isEmpty() || !peopleSelected.isEmpty()){
-                SearcherAdaptor adapter = new SearcherAdaptor(peopleSelected, eventsSelected);
-                recyclerView.setAdapter(adapter);
-            } else{
-
-            }
         }
 
         @Override
@@ -106,7 +102,7 @@ public class SearchActivity extends AppCompatActivity {
 
         data = DataCache.getInstance();
 
-        events =  data.getEvents();
+        events =  data.getFilteredEvents();
         people =  data.getPeople();
 
 

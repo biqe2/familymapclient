@@ -381,18 +381,19 @@ public class MapsFragment extends Fragment{
     @Override
     public void onResume(){
         super.onResume();
-        Boolean originalMap = false;
-        if(!data.getMaleFiltered() || !data.getFemaleFiltered() || !data.getMothersSideSwitch() || !data.getFathersSideSwitch() ) {
-            Map<String, EventModel> selectedEvents = data.getFilteredEvents();
-            Map<String, PersonModel> selectedPeople = data.getFilteredPeople();
-            mMap.clear();
-            drawMap(selectedEvents, selectedPeople);
-        } /*else {
-            Map<String, EventModel> selectedEvents = data.getEvents();
-            Map<String, PersonModel> selectedPeople = data.getPeople();
-         //   mMap.clear();
-            drawMap(selectedEvents, selectedPeople);
-        }*/
+        if(mMap != null) {
+            if (!data.getMaleFiltered() || !data.getFemaleFiltered() || !data.getMothersSideSwitch() || !data.getFathersSideSwitch()) {
+                Map<String, EventModel> selectedEvents = data.getFilteredEvents();
+                Map<String, PersonModel> selectedPeople = data.getFilteredPeople();
+                mMap.clear();
+                drawMap(selectedEvents, selectedPeople);
+            } else {
+                Map<String, EventModel> selectedEvents = data.getEvents();
+                Map<String, PersonModel> selectedPeople = data.getPeople();
+                mMap.clear();
+                drawMap(selectedEvents, selectedPeople);
+            }
+        }
 
         System.out.println("On Resume is working");
     }
@@ -407,7 +408,7 @@ public class MapsFragment extends Fragment{
             if(!fatherEventLines.isEmpty()){
                 EventModel event = fatherEventLines.get(0);
                 LatLng fatherEventLine = new LatLng(event.getLatitude(),event.getLongitude());
-                float lineWidthFather = lineWidth - 2;
+                float lineWidthFather = lineWidth * 0.7f;
                 PolylineOptions fatherLine = new PolylineOptions()
                         .add(orgLocation)
                         .add(fatherEventLine)
@@ -426,7 +427,7 @@ public class MapsFragment extends Fragment{
             if(!motherEventLines.isEmpty()){
                 EventModel event = motherEventLines.get(0);
                 LatLng motherEventLine = new LatLng(event.getLatitude(),event.getLongitude());
-                float lineWidthMother = lineWidth - 2;
+                float lineWidthMother = lineWidth *0.7f;
                 PolylineOptions motherLine = new PolylineOptions()
                         .add(orgLocation)
                         .add(motherEventLine)

@@ -319,7 +319,7 @@ public class DataCache {
         public void createPaternalAndMaternalLines(){
                 PersonModel motherOfUser = people.get(originalUser.getMotherID());
                 PersonModel fatherOfUser = people.get(originalUser.getFatherID());
-                //Do I need to have my same user when I am filtering one side of the fam?
+
                 maternalAncestors.put(originalUser.getPersonID(),originalUser);
                 paternalAncestors.put(originalUser.getPersonID(),originalUser);
 
