@@ -50,6 +50,10 @@ public class LoginTask implements Runnable{
             String firstName = userPerson.getFirstName();
             String lastName = userPerson.getLastName();
             data.setOriginalUser(userPerson);
+            PersonModel spousePerson = data.getPeople().get(userPerson.getSpouseID());
+            if(spousePerson != null){
+                data.setOriginalSpouse(spousePerson);
+            }
 
 
             //This is how you will get the specific name of the user

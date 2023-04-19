@@ -317,20 +317,16 @@ public class MapsFragment extends Fragment{
         //drawing events lines
 
         if(data.getLifeStoryLinesSwitch()) {
-            List<LatLng> personEvents = new ArrayList<LatLng>();
-            for (Map.Entry<String, EventModel> entry : eventMap.entrySet()) {
-                EventModel event = entry.getValue();
-                if (event.getPersonID().equals(personSelected.getPersonID())) {
-                    LatLng newEvent = new LatLng(event.getLatitude(), event.getLongitude());
-                    personEvents.add(newEvent);
-                }
-            }
+            List<EventModel> personEvents = new ArrayList<EventModel>();
+            personEvents = findEventsUser(personSelected);
 
             if (!personEvents.isEmpty()) {
-                for (LatLng pEvent : personEvents) {
+                for (int i = 0; i < personEvents.size()-1;i++){
+                    LatLng firstEvent = new LatLng(personEvents.get(i).getLatitude(), personEvents.get(i).getLongitude());
+                    LatLng secondEvent = new LatLng(personEvents.get(i+1).getLatitude(), personEvents.get(i+1).getLongitude());
                     PolylineOptions eventLine = new PolylineOptions()
-                            .add(placeToCenter)
-                            .add(pEvent)
+                            .add(firstEvent)
+                            .add(secondEvent)
                             //magenta lines
                             .color(0xffff00ff);
                     Polyline polylineEvent = mMap.addPolyline(eventLine);
@@ -341,6 +337,7 @@ public class MapsFragment extends Fragment{
 
         personInfo = true;
     }
+
     @Override
     public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
         inflater.inflate(R.menu.menu, menu);

@@ -105,23 +105,8 @@ public class SearchActivity extends AppCompatActivity {
         events =  data.getFilteredEvents();
         people =  data.getPeople();
 
-
-
-      /*  for(Map.Entry<String,EventModel> entry: events.entrySet()){
-            EventModel event = entry.getValue();
-            allEvents.add(event);
-        }
-
-        for(Map.Entry<String,PersonModel> entry: people.entrySet()){
-            PersonModel person = entry.getValue();
-            allPeople.add(person);
-        }*/
         textSearched = findViewById(R.id.textSearched);
         textSearched.addTextChangedListener(textWatcher);
-
-
-
-
 
     }
 

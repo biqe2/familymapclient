@@ -24,7 +24,7 @@ public class DataCache {
         //Map of each event stored by key = eventID
         private HashMap<String, EventModel> events;
         private String loginAuthtoken;
-
+        private PersonModel originalSpouse;
         private Boolean maleFiltered = true;
         private Boolean femaleFiltered = true;
         private Boolean spouseLineSwitch = true;
@@ -55,6 +55,15 @@ public class DataCache {
                 originalUser = new PersonModel();
                 paternalAncestors = new HashMap<>();
                 maternalAncestors = new HashMap<>();
+                originalSpouse = new PersonModel();
+        }
+
+        public PersonModel getOriginalSpouse() {
+                return originalSpouse;
+        }
+
+        public void setOriginalSpouse(PersonModel originalSpouse) {
+                this.originalSpouse = originalSpouse;
         }
 
         public Boolean getFamilyTreeLinesSwitch() {
@@ -156,7 +165,6 @@ public class DataCache {
                                 }
                         }
                         if (!maleFiltered) {
-
                                 for (Map.Entry<String, PersonModel> entry : people.entrySet()) {
                                         PersonModel person = entry.getValue();
                                         String personKey = entry.getKey();
@@ -243,6 +251,7 @@ public class DataCache {
 
                         if (!mothersSideSwitch) {
                                 Map<String, PersonModel> parentalOnly = getPaternalAncestors();
+
                                 for (Map.Entry<String, PersonModel> entry : parentalOnly.entrySet()) {
                                         PersonModel person = entry.getValue();
                                         String personKey = entry.getKey();
@@ -322,6 +331,8 @@ public class DataCache {
 
                 maternalAncestors.put(originalUser.getPersonID(),originalUser);
                 paternalAncestors.put(originalUser.getPersonID(),originalUser);
+                maternalAncestors.put(originalSpouse.getPersonID(),originalSpouse);
+                paternalAncestors.put(originalSpouse.getPersonID(),originalSpouse);
 
                 addParentsToMaternalOrPaternal(motherOfUser,true);
                 addParentsToMaternalOrPaternal(fatherOfUser,false);

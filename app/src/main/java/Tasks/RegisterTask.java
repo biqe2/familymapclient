@@ -48,6 +48,11 @@ public class RegisterTask implements Runnable{
             String firstName = userPerson.getFirstName();
             String lastName = userPerson.getLastName();
             data.setOriginalUser(userPerson);
+            PersonModel spousePerson = data.getPeople().get(userPerson.getSpouseID());
+            if(spousePerson != null){
+                data.setOriginalSpouse(spousePerson);
+            }
+
 
 
             sendMessage("Register was successful for " + firstName + " " + lastName);

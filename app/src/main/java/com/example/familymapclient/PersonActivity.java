@@ -65,7 +65,7 @@ public class PersonActivity extends AppCompatActivity {
             gender.setText("Male");
         }
         //Generating the expandableListView
-        Map<String, EventModel> events =  data.getEvents();
+        Map<String, EventModel> events =  data.getFilteredEvents();
 
         List<EventModel> personEvents = new ArrayList<EventModel>();
         List<PersonModel> personFamily = new ArrayList<PersonModel>();
