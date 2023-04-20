@@ -70,47 +70,19 @@ public class PersonActivity extends AppCompatActivity {
         List<EventModel> personEvents = new ArrayList<EventModel>();
         List<PersonModel> personFamily = new ArrayList<PersonModel>();
 
-        for(Map.Entry<String,EventModel> entry: events.entrySet()){
-            EventModel event = entry.getValue();
-
-            if(event.getPersonID().equals(selectedPersonID)){
-                personEvents.add(event);
-            }
-        }
-        Collections.sort(personEvents, new Comparator<EventModel>() {
-            @Override
-            public int compare(EventModel o1, EventModel o2) {
-                return o1.getYear().compareTo(o2.getYear());
-            }
-        });
+        personEvents = data.findEventsUser(personSelected);
 
         Map<String, PersonModel> people =  data.getPeople();
 
-        for(Map.Entry<String,PersonModel> entry: people.entrySet()){
-            PersonModel person = entry.getValue();
+        data.setDirectFamily(people, personSelected, selectedPersonID);
+        child = data.getDirectFamily().get("child");
+        father = data.getDirectFamily().get("father");
+        mother = data.getDirectFamily().get("mother");
+        spouse = data.getDirectFamily().get("spouse");
 
-            if(personSelected.getFatherID() != null || personSelected.getMotherID() != null) {
-                //I might be able to make this one if statement with ors we will see.
-                if (personSelected.getFatherID().equals(person.getPersonID())) {
-                    father = person;
-                    personFamily.add(father);
-                } else if (personSelected.getMotherID().equals(person.getPersonID())) {
-                    mother = person;
-                    personFamily.add(mother);
-                }
-            }
-            if(personSelected.getSpouseID() != null) {
-                if (personSelected.getSpouseID().equals(person.getPersonID())) {
-                    spouse = person;
-                    personFamily.add(spouse);
-                }
-            }
-            if(person.getFatherID() != null || person.getMotherID() != null) {
-                if (selectedPersonID.equals(person.getFatherID()) || selectedPersonID.equals(person.getMotherID())) {
-                    child = person;
-                    personFamily.add(child);
-                }
-            }
+        for(Map.Entry<String,PersonModel> entry: data.getDirectFamily().entrySet()){
+            PersonModel person = entry.getValue();
+            personFamily.add(person);
         }
         expandableListView.setAdapter(new ExpandableListAdapter(personFamily,personEvents));
     }

@@ -23,8 +23,7 @@ public class MainActivity extends AppCompatActivity implements LoginFirst.Listen
                     .add(R.id.fragmentFrameLayout, fragment)
                     .commit();
         } else {
-            // If the fragment is not null, the MainActivity was destroyed and recreated
-            // so we need to reset the listener to the new instance of the fragment
+
             if(fragment instanceof LoginFirst) {
                 ((LoginFirst) fragment).registerListener(this);
             }

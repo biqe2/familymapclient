@@ -1,32 +1,28 @@
 package com.example.familymapclient;
 
 import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
-import android.app.Person;
-import android.app.people.PeopleManager;
 import android.content.Intent;
-import android.media.metrics.Event;
 import android.os.Bundle;
 import android.text.Editable;
 import android.text.TextWatcher;
-import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
-import android.view.ViewGroup;
 import android.widget.EditText;
 import android.widget.ImageView;
-import android.widget.ListView;
-import android.widget.SearchView;
 import android.widget.TextView;
+
+import com.google.android.gms.maps.model.LatLng;
+import com.google.maps.android.clustering.ClusterItem;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
-import java.util.concurrent.RecursiveAction;
 
 import Model.EventModel;
 import Model.PersonModel;
@@ -56,30 +52,8 @@ public class SearchActivity extends AppCompatActivity {
 
             List<EventModel> eventsSelected = new ArrayList<EventModel>();
             List<PersonModel> peopleSelected = new ArrayList<PersonModel>();
-
-            for(Map.Entry<String,EventModel> entry: events.entrySet()){
-                EventModel event = entry.getValue();
-                StringBuilder sentence = new StringBuilder();
-                sentence.append(event.getCountry().toString().toLowerCase());
-                sentence.append(event.getCity().toString().toLowerCase());
-                sentence.append(event.getEventType().toString().toLowerCase());
-                sentence.append(event.getEventType().toString().toLowerCase());
-                sentence.append(event.getYear().toString().toLowerCase());
-                String sentence2 = sentence.toString();
-                if(sentence2.contains(text)){
-                    eventsSelected.add(event);
-                }
-            }
-
-            for(Map.Entry<String, PersonModel> entry: people.entrySet()){
-                PersonModel person = entry.getValue();
-                String sentence = person.getFirstName() + " " + person.getLastName();
-                sentence.toLowerCase();
-                if(person.getFirstName().toLowerCase().contains(text) || person.getLastName().toString().toLowerCase().contains(text)){
-                    peopleSelected.add(person);
-                }
-            }
-
+            eventsSelected = data.getSearchedEvents(text);
+            peopleSelected = data.getSearchedPeople(text);
 
             SearcherAdaptor adapter = new SearcherAdaptor(peopleSelected, eventsSelected);
             recyclerView.setAdapter(adapter);
@@ -216,6 +190,4 @@ public class SearchActivity extends AppCompatActivity {
         }
         return(true);
     }
-
-
 }

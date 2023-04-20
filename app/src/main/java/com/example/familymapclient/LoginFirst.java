@@ -30,7 +30,7 @@ import Tasks.*;
 public class LoginFirst extends Fragment {
 
     private Listener listener;
-    private String serverHost = "10.34.18.88";
+    private String serverHost = "10.34.18.70";
     private String serverPort = "8080";
     private String gender = "FEMALE";
     private LoginRequest loginRequest;

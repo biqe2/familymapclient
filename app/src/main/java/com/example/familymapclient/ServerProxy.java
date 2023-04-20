@@ -12,6 +12,7 @@ import com.google.gson.Gson;
 import Model.PersonModel;
 import Requests.LoginRequest;
 import Requests.RegisterRequest;
+import Responses.ClearResponse;
 import Responses.EventResponse;
 import Responses.LoginResponse;
 import Responses.PersonResponse;

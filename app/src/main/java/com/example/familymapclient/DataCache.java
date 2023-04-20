@@ -5,8 +5,12 @@ import android.app.Person;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
+import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 import java.util.Set;
@@ -38,6 +42,7 @@ public class DataCache {
         private PersonModel originalUser;
         private HashMap<String, PersonModel> paternalAncestors;
         private HashMap<String, PersonModel> maternalAncestors;
+        private HashMap<String, PersonModel> directFamily;
 
 
         public synchronized static DataCache getInstance(){
@@ -56,6 +61,37 @@ public class DataCache {
                 paternalAncestors = new HashMap<>();
                 maternalAncestors = new HashMap<>();
                 originalSpouse = new PersonModel();
+                directFamily = new HashMap<>();
+        }
+
+        public HashMap<String, PersonModel> getDirectFamily() {
+                return directFamily;
+        }
+
+        public void setDirectFamily(Map<String, PersonModel> peopleMap, PersonModel personSelected, String selectedPersonID) {
+                directFamily.clear();
+
+                for(Map.Entry<String,PersonModel> entry: peopleMap.entrySet()){
+                        PersonModel person = entry.getValue();
+
+                        if(personSelected.getFatherID() != null || personSelected.getMotherID() != null) {
+                                if (personSelected.getFatherID().equals(person.getPersonID())) {
+                                        directFamily.put("father",person);
+                                } else if (personSelected.getMotherID().equals(person.getPersonID())) {
+                                        directFamily.put("mother",person);
+                                }
+                        }
+                        if(personSelected.getSpouseID() != null) {
+                                if (personSelected.getSpouseID().equals(person.getPersonID())) {
+                                        directFamily.put("spouse",person);
+                                }
+                        }
+                        if(person.getFatherID() != null || person.getMotherID() != null) {
+                                if (selectedPersonID.equals(person.getFatherID()) || selectedPersonID.equals(person.getMotherID())) {
+                                        directFamily.put("child",person);
+                                }
+                        }
+                }
         }
 
         public PersonModel getOriginalSpouse() {
@@ -195,6 +231,9 @@ public class DataCache {
                                         }
                                 }
                         }
+                        if(!femaleFiltered && !maleFiltered){
+                                filteredPeople.clear();
+                        }
                         return filteredPeople;
                 }
 
@@ -269,7 +308,9 @@ public class DataCache {
                                 }
 
                         }
-
+                        if(!femaleFiltered && !maleFiltered){
+                                filteredEvents.clear();
+                        }
                         return filteredEvents;
                 }
 
@@ -361,5 +402,61 @@ public class DataCache {
                         }
                 }
         }
+
+        public List<EventModel> findEventsUser(PersonModel person){
+                List<EventModel> personEvents = new ArrayList<EventModel>();
+                String personID = person.getPersonID();
+                for(Map.Entry<String,EventModel> entry: events.entrySet()){
+                        EventModel personEvent = entry.getValue();
+
+                        if(personEvent.getPersonID().equals(personID)){
+                                personEvents.add(personEvent);
+                        }
+                }
+                Collections.sort(personEvents, new Comparator<EventModel>() {
+                        @Override
+                        public int compare(EventModel o1, EventModel o2) {
+                                return o1.getYear().compareTo(o2.getYear());
+                        }
+                });
+                return personEvents;
+        }
+
+        public List<EventModel> getSearchedEvents(String givenText){
+                String text = givenText.toLowerCase();
+                List<EventModel> searchedEvents = new ArrayList<EventModel>();
+                for(Map.Entry<String,EventModel> entry: events.entrySet()){
+                        EventModel event = entry.getValue();
+                        StringBuilder sentence = new StringBuilder();
+                        sentence.append(event.getCountry().toString().toLowerCase());
+                        sentence.append(event.getCity().toString().toLowerCase());
+                        sentence.append(event.getEventType().toString().toLowerCase());
+                        sentence.append(event.getEventType().toString().toLowerCase());
+                        sentence.append(event.getYear().toString().toLowerCase());
+                        String sentence2 = sentence.toString();
+                        if(sentence2.contains(text)){
+                                searchedEvents.add(event);
+                        }
+                }
+                return searchedEvents;
+        }
+
+
+        public List<PersonModel> getSearchedPeople(String givenText){
+                String text = givenText.toLowerCase();
+                List<PersonModel> searchedPeople = new ArrayList<PersonModel>();
+                for(Map.Entry<String, PersonModel> entry: people.entrySet()){
+                        PersonModel person = entry.getValue();
+                        String sentence = person.getFirstName() + " " + person.getLastName();
+                        sentence.toLowerCase();
+                        if(person.getFirstName().toLowerCase().contains(text) || person.getLastName().toString().toLowerCase().contains(text)){
+                                searchedPeople.add(person);
+                        }
+                }
+                return searchedPeople;
+        }
+
+
+
 
 }

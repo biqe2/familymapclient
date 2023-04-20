@@ -117,54 +117,54 @@ public class MapsFragment extends Fragment{
     };
 
     public void drawMap(Map<String, EventModel> eventMap, Map<String, PersonModel> peopleMap){
-        Map<String,Integer> eventsType = new HashMap<String,Integer>();
 
-        for(Map.Entry<String, EventModel> entry : eventMap.entrySet()){
-            Integer color;
-            Random random = new Random();
-            EventModel event = entry.getValue();
-            PersonModel person = peopleMap.get(event.getPersonID());
-            String eventType = event.getEventType().toLowerCase();
-            Boolean mapEmpty = eventsType.isEmpty();
-            if(mapEmpty){//eventsType == null){
-                color = random.nextInt(350);
-                eventsType.put(eventType, color);
-            } else {
-                Integer type = eventsType.get(eventType);
-                if(type == null){
+            Map<String, Integer> eventsType = new HashMap<String, Integer>();
+
+            for (Map.Entry<String, EventModel> entry : eventMap.entrySet()) {
+                Integer color;
+                Random random = new Random();
+                EventModel event = entry.getValue();
+                PersonModel person = peopleMap.get(event.getPersonID());
+                String eventType = event.getEventType().toLowerCase();
+                Boolean mapEmpty = eventsType.isEmpty();
+                if (mapEmpty) {//eventsType == null){
                     color = random.nextInt(350);
                     eventsType.put(eventType, color);
                 } else {
-                    color = eventsType.get(eventType);
+                    Integer type = eventsType.get(eventType);
+                    if (type == null) {
+                        color = random.nextInt(350);
+                        eventsType.put(eventType, color);
+                    } else {
+                        color = eventsType.get(eventType);
+                    }
+                }
+                if (person != null) {
+                    LatLng eventPlace = new LatLng(event.getLatitude(), event.getLongitude());
+                    Marker marker = mMap.addMarker(new MarkerOptions().position(eventPlace).title(event.getCity() +
+                            ", " + event.getCountry()).icon(BitmapDescriptorFactory.defaultMarker(color)));
+                    marker.setTag(event);
                 }
             }
-            if(person != null) {
-                LatLng eventPlace = new LatLng(event.getLatitude(), event.getLongitude());
-                Marker marker = mMap.addMarker(new MarkerOptions().position(eventPlace).title(event.getCity() +
-                        ", " + event.getCountry()).icon(BitmapDescriptorFactory.defaultMarker(color)));
-                marker.setTag(event);
+
+            if (eventComingActivity) {
+                eventSelected = eventMap.get(eventID);
+                selectedEvent(eventSelected, eventMap, peopleMap);
             }
-        }
 
-        if(eventComingActivity){
-            eventSelected = eventMap.get(eventID);
-            selectedEvent(eventSelected, eventMap, peopleMap);
-        }
+            mMap.setOnMarkerClickListener(new GoogleMap.OnMarkerClickListener() {
+                @Override
+                public boolean onMarkerClick(@NonNull Marker marker) {
 
-        mMap.setOnMarkerClickListener(new GoogleMap.OnMarkerClickListener() {
-            @Override
-            public boolean onMarkerClick(@NonNull Marker marker) {
+                    eventSelected = (EventModel) marker.getTag();
+                    selectedEvent(eventSelected, eventMap, peopleMap);
+                    Log.d("Click", "was clicked you");
 
-                eventSelected = (EventModel) marker.getTag();
-                selectedEvent(eventSelected, eventMap,peopleMap);
-                Log.d("Click", "was clicked you");
+                    return false;
+                }
+            });
 
-                return false;
-            }
-        });
     }
-
-
 
     @Nullable
     @Override
@@ -231,33 +231,18 @@ public class MapsFragment extends Fragment{
                 eventSelected.getCountry() +" (" + eventSelected.getYear() +")");
 
         //polylines
+        data.setDirectFamily(peopleMap,personSelected,selectedPersonID);
+        child = data.getDirectFamily().get("child");
+        father = data.getDirectFamily().get("father");
+        mother = data.getDirectFamily().get("mother");
+        spouse = data.getDirectFamily().get("spouse");
 
-        for(Map.Entry<String,PersonModel> entry: peopleMap.entrySet()){
-            PersonModel person = entry.getValue();
 
-            if(personSelected.getFatherID() != null || personSelected.getMotherID() != null) {
-                if (personSelected.getFatherID().equals(person.getPersonID())) {
-                    father = person;
-                } else if (personSelected.getMotherID().equals(person.getPersonID())) {
-                    mother = person;
-                }
-            }
-            if(personSelected.getSpouseID() != null) {
-                if (personSelected.getSpouseID().equals(person.getPersonID())) {
-                    spouse = person;
-                }
-            }
-            if(person.getFatherID() != null || person.getMotherID() != null) {
-                if (selectedPersonID.equals(person.getFatherID()) || selectedPersonID.equals(person.getMotherID())) {
-                    child = person;
-                }
-            }
-        }
         //drawing spouse lines
         if(data.getSpouseLineSwitch()) {
             if (spouse != null) {
                 List<EventModel> spouseEvents = new ArrayList<EventModel>();
-                spouseEvents = findEventsUser(spouse);
+                spouseEvents = data.findEventsUser(spouse);
 
                 if (!spouseEvents.isEmpty()) {
                     EventModel event = spouseEvents.get(0);
@@ -276,7 +261,7 @@ public class MapsFragment extends Fragment{
         if(data.getFamilyTreeLinesSwitch()) {
             if (father != null) {
                 List<EventModel> fatherEvents = new ArrayList<EventModel>();
-                fatherEvents = findEventsUser(father);
+                fatherEvents = data.findEventsUser(father);
 
                 if (!fatherEvents.isEmpty()) {
                     EventModel event = fatherEvents.get(0);
@@ -296,7 +281,7 @@ public class MapsFragment extends Fragment{
 
             if (mother != null) {
                 List<EventModel> motherEvents = new ArrayList<EventModel>();
-                motherEvents = findEventsUser(mother);
+                motherEvents = data.findEventsUser(mother);
                 if (!motherEvents.isEmpty()) {
                     EventModel event = motherEvents.get(0);
                     LatLng spouseBirth = new LatLng(event.getLatitude(), event.getLongitude());
@@ -318,7 +303,7 @@ public class MapsFragment extends Fragment{
 
         if(data.getLifeStoryLinesSwitch()) {
             List<EventModel> personEvents = new ArrayList<EventModel>();
-            personEvents = findEventsUser(personSelected);
+            personEvents = data.findEventsUser(personSelected);
 
             if (!personEvents.isEmpty()) {
                 for (int i = 0; i < personEvents.size()-1;i++){
@@ -401,7 +386,7 @@ public class MapsFragment extends Fragment{
         if(father == null || user.getFatherID().equals("")){
             return;
         } else{
-            List<EventModel> fatherEventLines = findEventsUser(father);
+            List<EventModel> fatherEventLines = data.findEventsUser(father);
             if(!fatherEventLines.isEmpty()){
                 EventModel event = fatherEventLines.get(0);
                 LatLng fatherEventLine = new LatLng(event.getLatitude(),event.getLongitude());
@@ -420,7 +405,7 @@ public class MapsFragment extends Fragment{
         if(mother == null || user.getMotherID().equals("")){
             return;
         } else{
-            List<EventModel> motherEventLines = findEventsUser(mother);
+            List<EventModel> motherEventLines = data.findEventsUser(mother);
             if(!motherEventLines.isEmpty()){
                 EventModel event = motherEventLines.get(0);
                 LatLng motherEventLine = new LatLng(event.getLatitude(),event.getLongitude());
@@ -438,7 +423,7 @@ public class MapsFragment extends Fragment{
         }
     }
 
-    public List<EventModel> findEventsUser(PersonModel person){
+   /* public List<EventModel> findEventsUser(PersonModel person){
         List<EventModel> personEvents = new ArrayList<EventModel>();
         String personID = person.getPersonID();
         for(Map.Entry<String,EventModel> entry: eventLists.entrySet()){
@@ -455,7 +440,7 @@ public class MapsFragment extends Fragment{
             }
         });
         return personEvents;
-    }
+    }*/
 
 
 }
