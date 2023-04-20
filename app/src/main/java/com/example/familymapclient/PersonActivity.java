@@ -251,11 +251,6 @@ public class PersonActivity extends AppCompatActivity {
                     startActivity(intent);
                 }
             });
-
-
-
-
-
         }
 
         @Override

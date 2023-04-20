@@ -143,12 +143,7 @@ public class ServerProxy {
 
             http.connect();
 
-            //For get I dont need the next 4 lines? 147-153
-
-
-
             if (http.getResponseCode() == HttpURLConnection.HTTP_OK) {
-                //We added this basically
                 InputStream resultHttp = http.getInputStream();
 
                 String resultData = readString(resultHttp);
@@ -165,9 +160,6 @@ public class ServerProxy {
 
                 String resultData = readString(respBody);
 
-
-
-                //We added the next two lines
                 PersonResponse response = gson.fromJson(resultData, PersonResponse.class);
                 return response;
 

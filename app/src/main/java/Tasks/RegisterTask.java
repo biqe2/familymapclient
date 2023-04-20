@@ -52,9 +52,6 @@ public class RegisterTask implements Runnable{
             if(spousePerson != null){
                 data.setOriginalSpouse(spousePerson);
             }
-
-
-
             sendMessage("Register was successful for " + firstName + " " + lastName);
         }
     }

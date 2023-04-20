@@ -201,13 +201,12 @@ public class MapsFragment extends Fragment{
 
     public void selectedEvent(EventModel eventSelected, Map<String, EventModel> eventMap, Map<String, PersonModel> peopleMap){
 
-        PersonModel child;
+        PersonModel child = null;
         PersonModel spouse = null;
         PersonModel father = null;
         PersonModel mother = null;
         String selectedPersonID = new String();
         selectedPersonID = eventSelected.getPersonID();
-
 
         for(Polyline line : polylines){
             line.remove();
@@ -422,25 +421,5 @@ public class MapsFragment extends Fragment{
             }
         }
     }
-
-   /* public List<EventModel> findEventsUser(PersonModel person){
-        List<EventModel> personEvents = new ArrayList<EventModel>();
-        String personID = person.getPersonID();
-        for(Map.Entry<String,EventModel> entry: eventLists.entrySet()){
-            EventModel personEvent = entry.getValue();
-
-            if(personEvent.getPersonID().equals(personID)){
-                personEvents.add(personEvent);
-            }
-        }
-        Collections.sort(personEvents, new Comparator<EventModel>() {
-            @Override
-            public int compare(EventModel o1, EventModel o2) {
-                return o1.getYear().compareTo(o2.getYear());
-            }
-        });
-        return personEvents;
-    }*/
-
 
 }

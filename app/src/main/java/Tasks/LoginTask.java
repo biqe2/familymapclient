@@ -55,20 +55,15 @@ public class LoginTask implements Runnable{
                 data.setOriginalSpouse(spousePerson);
             }
 
-
-            //This is how you will get the specific name of the user
-
             sendMessage("login was successful for " + firstName + " " + lastName);
         }
     }
 
     private void sendMessage(String message) {
         Message respondMessage = Message.obtain();
-
         Bundle messageBundle = new Bundle();
         messageBundle.putString("loginKey", message);
         respondMessage.setData(messageBundle);
-
         messageHandler.sendMessage(respondMessage);
     }
 }
